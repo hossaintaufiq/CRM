@@ -1,59 +1,75 @@
-# Senior Full-Stack Developer Showcase
+# Senior Full-Stack Developer Showcase (Dynamic CRM)
 
-Enterprise-grade CRM platform frontend scaffolded with modern web architecture, production-ready code quality, and interaction design standards expected in senior-level delivery.
+Production-grade CRM frontend built with Next.js App Router, TypeScript strict mode, Tailwind CSS token theming, and GSAP micro-interactions.  
+This repository is designed to demonstrate senior-level frontend architecture, system thinking, and delivery quality for recruiter and hiring manager review.
 
 ---
 
-## Why This Repository Matters
+## What Is Implemented
 
-This repository demonstrates how a Senior Full-Stack Developer approaches frontend architecture in a business-critical environment:
+This is no longer a single page scaffold. The system now includes complete route-based CRM modules with shared dynamic state:
 
-- Translates product requirements into scalable technical systems
-- Balances performance, accessibility, maintainability, and UX polish
-- Implements modular design systems and typed domain modeling
-- Applies animation and state strategies without sacrificing code health
-
-The current implementation focuses on a high-performance CRM interface with dashboard analytics, lead management workflows, and sales pipeline interactions.
+- `/dashboard` - executive metrics, pipeline chart, live activity stream
+- `/leads` - searchable/sortable lead grid, multi-select, status updates, animated detail drawer
+- `/deals` - enterprise kanban stages with GSAP FLIP reflow transitions
+- `/contacts` - account contact directory
+- `/analytics` - KPI trend monitor and computed operational metrics
+- `/automations` - workflow rules with live run counters
+- `/notifications` - realtime notification hub with read/unread state
+- `/settings` - organization configuration surface
 
 ---
 
 ## Tech Stack
 
-- **Framework:** Next.js (App Router)
-- **Language:** TypeScript (strict mode)
-- **Styling:** Tailwind CSS + CSS variable token system
-- **UI Paradigm:** Shadcn/Radix-inspired reusable primitives
-- **Animation:** GSAP (timeline orchestration, staggering, FLIP transitions)
+- **Framework:** Next.js 14+ style architecture via App Router
+- **Language:** TypeScript (strict)
+- **Styling:** Tailwind CSS + CSS variable design tokens
+- **UI Approach:** Reusable shadcn-style primitives (`card`, `button`, `badge`, `input`, `avatar`)
+- **Animation:** GSAP 3 (timeline transitions + FLIP)
 - **Icons:** Lucide React
 
 ---
 
-## Senior Engineering Signals in This Project
+## Dynamic Data System (Backend-Ready)
 
-### 1) Architecture First
+The app now runs on a centralized dynamic state model (frontend-only demo mode) and is structured for backend replacement later:
 
-- Feature modules are separated by domain (`dashboard`, `kanban`, `leads`, `layout`, `ui`)
-- Shared types and utilities reduce drift and improve consistency
-- Data/state concerns are isolated via a dedicated CRM hook
+- **Demo data source:** `frontend/src/data/crm-demo-data.ts`
+- **Global shared state provider:** `frontend/src/hooks/use-crm-data.tsx`
+- **Typed domain models:** `frontend/src/types/crm.ts`
 
-### 2) Production-Minded Frontend Patterns
+Current dynamic behavior:
 
-- Typed interfaces for CRM entities (deals, leads, KPIs, activities)
-- Reusable UI primitives with variant-based styling patterns
-- Theme/token design with CSS variables for predictable scaling
+- KPI trend arrays update over time
+- activity timestamps refresh
+- deal stage moves create new activity + notification events
+- automation run counters mutate over time
+- lead status updates propagate globally
+- notification read/unread state updates top nav badge in realtime
 
-### 3) UX + Motion Quality
+---
 
-- Sidebar transitions orchestrated with a unified GSAP timeline
-- Dashboard load sequence uses controlled staggered entrance animation
-- Kanban card reflow uses GSAP FLIP for smooth, non-jarring layout transitions
-- Lead drawer interaction includes layered animation and cleanup-safe effects
+## Senior Engineering Signals
 
-### 4) Reliability & Standards
+### 1) Architecture & Modularity
 
+- Route groups and feature-based module organization
+- Explicit domain typing across CRM entities
+- Shared app shell + page-specific module composition
+
+### 2) UX + Motion Quality
+
+- Sidebar collapse/expand synchronized with GSAP timeline
+- Dashboard staggered entrance sequence
+- FLIP-based kanban transitions for smooth re-layout
+- Drawer and overlay animations with cleanup-safe GSAP usage
+
+### 3) Reliability & Standards
+
+- Strict TypeScript with no `any`
 - Lint-safe and build-verified implementation
-- Explicit component boundaries for easier testing and team collaboration
-- Strict TypeScript discipline without `any`
+- Reusable UI primitives reduce duplication and style drift
 
 ---
 
@@ -65,12 +81,22 @@ The current implementation focuses on a high-performance CRM interface with dash
 └── frontend/
     ├── src/
     │   ├── app/
+    │   │   ├── (crm)/
+    │   │   │   ├── analytics/
+    │   │   │   ├── automations/
+    │   │   │   ├── contacts/
+    │   │   │   ├── dashboard/
+    │   │   │   ├── deals/
+    │   │   │   ├── leads/
+    │   │   │   ├── notifications/
+    │   │   │   └── settings/
     │   ├── components/
     │   │   ├── dashboard/
     │   │   ├── kanban/
     │   │   ├── layout/
     │   │   ├── leads/
     │   │   └── ui/
+    │   ├── data/
     │   ├── hooks/
     │   ├── lib/
     │   └── types/
@@ -79,16 +105,7 @@ The current implementation focuses on a high-performance CRM interface with dash
 
 ---
 
-## Business-Centric Feature Coverage
-
-- Persistent CRM shell with collapsible navigation and command palette behavior
-- Executive dashboard with KPI ribbon, pipeline forecast section, and activity stream
-- Enterprise sales pipeline layout with stage-based deal organization
-- Lead management grid with detail drawer and quick interaction controls
-
----
-
-## How to Run
+## Run Locally
 
 From the repository root:
 
@@ -98,7 +115,7 @@ npm install
 npm run dev
 ```
 
-Production validation:
+Quality checks:
 
 ```bash
 npm run lint
@@ -109,20 +126,23 @@ npm run build
 
 ## Recruiter Snapshot
 
-If you are evaluating this repository for a Senior Full-Stack Developer role, this codebase highlights:
+For Senior Full-Stack Developer evaluation, this project demonstrates:
 
-- System design thinking at the UI architecture level
-- Strong frontend engineering fundamentals with modern tooling
-- Ability to ship polished, interactive SaaS experiences
-- Readiness for ownership in cross-functional product teams
+- scalable frontend system design (not just visual implementation)
+- strong TypeScript and modular component architecture
+- polished SaaS-grade interaction quality and animation discipline
+- backend-ready state layer separation (demo data now, API later)
+- ability to ship complete, multi-module product surfaces
 
 ---
 
-## Next Evolution Path (Senior Scope)
+## Next Step (Backend Integration)
 
-- Route-based module segmentation (`/dashboard`, `/deals`, `/leads`, `/analytics`)
-- Real drag-and-drop pipeline interactions with persisted state
-- API integration layer (server actions / typed client contracts)
-- Role-aware permissions and feature flags
-- End-to-end test coverage (Playwright) + component testing (Vitest/RTL)
+When you are ready to add backend:
+
+- replace `crm-demo-data.ts` with API fetch layer
+- preserve `use-crm-data` contract as app-facing state boundary
+- add optimistic updates + error handling around mutations
+- wire auth/roles for route/module permissions
+- add integration and e2e tests for critical CRM flows
 
