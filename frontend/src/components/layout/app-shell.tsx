@@ -2,6 +2,8 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   BarChart3,
   Bot,
@@ -18,22 +20,27 @@ import { TopNavbar } from "@/components/layout/top-navbar";
 
 interface AppShellProps {
   children: React.ReactNode;
+  unreadNotifications: number;
 }
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard" },
-  { icon: Contact2, label: "Leads" },
-  { icon: Workflow, label: "Deals (Kanban)" },
-  { icon: Contact2, label: "Contacts" },
-  { icon: BarChart3, label: "Analytics" },
-  { icon: Bot, label: "Automations" },
-  { icon: Settings, label: "Settings" },
+  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
+  { icon: Contact2, label: "Leads", href: "/leads" },
+  { icon: Workflow, label: "Deals (Kanban)", href: "/deals" },
+  { icon: Contact2, label: "Contacts", href: "/contacts" },
+  { icon: BarChart3, label: "Analytics", href: "/analytics" },
+  { icon: Bot, label: "Automations", href: "/automations" },
+  { icon: Settings, label: "Settings", href: "/settings" },
 ] as const;
 
-export function AppShell({ children }: AppShellProps): React.JSX.Element {
+export function AppShell({
+  children,
+  unreadNotifications,
+}: AppShellProps): React.JSX.Element {
   const [collapsed, setCollapsed] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
   const shellRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
 
   useLayoutEffect(() => {
     const shell = shellRef.current;
@@ -99,26 +106,29 @@ export function AppShell({ children }: AppShellProps): React.JSX.Element {
         </div>
 
         <nav className="space-y-1">
-          {navItems.map(({ icon: Icon, label }) => (
-            <button
+          {navItems.map(({ icon: Icon, label, href }) => (
+            <Link
               key={label}
-              type="button"
+              href={href}
               className={cn(
                 "focus-ring flex h-10 w-full items-center gap-3 rounded-md px-3 text-sm text-sidebar-foreground transition-colors hover:bg-muted",
-                label === "Dashboard" && "bg-muted",
+                pathname === href && "bg-muted",
               )}
             >
               <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
               <span data-link-label className="truncate">
                 {label}
               </span>
-            </button>
+            </Link>
           ))}
         </nav>
       </aside>
 
       <div data-main className="ml-[268px] min-h-screen transition-none">
-        <TopNavbar onCommandPaletteOpen={() => setCommandOpen(true)} />
+        <TopNavbar
+          onCommandPaletteOpen={() => setCommandOpen(true)}
+          unreadNotifications={unreadNotifications}
+        />
         <main className="p-6">{children}</main>
       </div>
 

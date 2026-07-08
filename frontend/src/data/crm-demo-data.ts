@@ -1,20 +1,14 @@
-"use client";
+import type {
+  Activity,
+  AutomationRule,
+  Contact,
+  Deal,
+  KPIValue,
+  Lead,
+  NotificationItem,
+} from "@/types/crm";
 
-import { useCallback, useMemo, useState } from "react";
-import type { Activity, Deal, DealStage, KPIValue, Lead } from "@/types/crm";
-
-interface CRMDataState {
-  kpis: KPIValue[];
-  activities: Activity[];
-  deals: Deal[];
-  leads: Lead[];
-  selectedLead: Lead | null;
-  moveDeal: (dealId: string, nextStage: DealStage) => void;
-  selectLead: (leadId: string) => void;
-  clearLeadSelection: () => void;
-}
-
-const initialKpis: KPIValue[] = [
+export const demoKpis: KPIValue[] = [
   {
     id: "mrr",
     label: "MRR / ARR",
@@ -45,13 +39,14 @@ const initialKpis: KPIValue[] = [
   },
 ];
 
-const initialActivities: Activity[] = [
+export const demoActivities: Activity[] = [
   {
     id: "act_01",
     actor: "Avery Blake",
     action: "converted lead",
     target: "Northwind Labs",
     at: "2m ago",
+    timestamp: Date.now() - 2 * 60 * 1000,
   },
   {
     id: "act_02",
@@ -59,6 +54,7 @@ const initialActivities: Activity[] = [
     action: "sent proposal",
     target: "Altair Cloud",
     at: "14m ago",
+    timestamp: Date.now() - 14 * 60 * 1000,
   },
   {
     id: "act_03",
@@ -66,17 +62,11 @@ const initialActivities: Activity[] = [
     action: "logged discovery call",
     target: "RidgeCore Systems",
     at: "31m ago",
-  },
-  {
-    id: "act_04",
-    actor: "Liam Park",
-    action: "registered email open",
-    target: "Summit Dataworks",
-    at: "1h ago",
+    timestamp: Date.now() - 31 * 60 * 1000,
   },
 ];
 
-const initialDeals: Deal[] = [
+export const demoDeals: Deal[] = [
   {
     id: "deal_1",
     companyName: "Northwind Labs",
@@ -117,9 +107,19 @@ const initialDeals: Deal[] = [
     lastActivity: "Today",
     stage: "Closed Won",
   },
+  {
+    id: "deal_5",
+    companyName: "ForgePoint AI",
+    value: 64000,
+    healthScore: "Warm",
+    ownerName: "Liam Park",
+    ownerInitials: "LP",
+    lastActivity: "2h ago",
+    stage: "Lead",
+  },
 ];
 
-const initialLeads: Lead[] = [
+export const demoLeads: Lead[] = [
   {
     id: "lead_1",
     name: "Maya Patel",
@@ -170,40 +170,73 @@ const initialLeads: Lead[] = [
   },
 ];
 
-export function useCRMData(): CRMDataState {
-  const [deals, setDeals] = useState<Deal[]>(initialDeals);
-  const [leads] = useState<Lead[]>(initialLeads);
-  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
+export const demoContacts: Contact[] = [
+  {
+    id: "contact_1",
+    name: "Alicia Moore",
+    company: "Northwind Labs",
+    role: "VP Operations",
+    email: "alicia@northwind.io",
+    phone: "+1 415 555 0170",
+    owner: "Avery Blake",
+  },
+  {
+    id: "contact_2",
+    name: "Derek Lin",
+    company: "Altair Cloud",
+    role: "Head of RevOps",
+    email: "derek@altaircloud.com",
+    phone: "+1 415 555 0178",
+    owner: "Jules Tan",
+  },
+  {
+    id: "contact_3",
+    name: "Priya Anand",
+    company: "Summit Dataworks",
+    role: "CFO",
+    email: "priya@summitdw.com",
+    phone: "+1 415 555 0133",
+    owner: "Liam Park",
+  },
+];
 
-  const moveDeal = useCallback((dealId: string, nextStage: DealStage): void => {
-    setDeals((currentDeals) =>
-      currentDeals.map((deal) =>
-        deal.id === dealId ? { ...deal, stage: nextStage } : deal,
-      ),
-    );
-  }, []);
+export const demoNotifications: NotificationItem[] = [
+  {
+    id: "notif_1",
+    title: "Pipeline update",
+    description: "Northwind Labs moved to Negotiation.",
+    read: false,
+    timestamp: Date.now() - 4 * 60 * 1000,
+  },
+  {
+    id: "notif_2",
+    title: "Lead engagement spike",
+    description: "OrbitIQ opened your email sequence twice.",
+    read: false,
+    timestamp: Date.now() - 15 * 60 * 1000,
+  },
+];
 
-  const selectLead = useCallback((leadId: string): void => {
-    setSelectedLeadId(leadId);
-  }, []);
-
-  const clearLeadSelection = useCallback((): void => {
-    setSelectedLeadId(null);
-  }, []);
-
-  const selectedLead = useMemo(
-    () => leads.find((lead) => lead.id === selectedLeadId) ?? null,
-    [leads, selectedLeadId],
-  );
-
-  return {
-    kpis: initialKpis,
-    activities: initialActivities,
-    deals,
-    leads,
-    selectedLead,
-    moveDeal,
-    selectLead,
-    clearLeadSelection,
-  };
-}
+export const demoAutomations: AutomationRule[] = [
+  {
+    id: "auto_1",
+    name: "Inbound lead routing",
+    trigger: "New inbound lead",
+    status: "Active",
+    runsToday: 17,
+  },
+  {
+    id: "auto_2",
+    name: "Proposal follow-up",
+    trigger: "Proposal sent + 48h no reply",
+    status: "Active",
+    runsToday: 9,
+  },
+  {
+    id: "auto_3",
+    name: "Dormant deal reminder",
+    trigger: "No activity for 7 days",
+    status: "Paused",
+    runsToday: 0,
+  },
+];

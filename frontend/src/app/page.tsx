@@ -1,5 +1,5 @@
-import { CRMWorkspace } from "@/components/crm-workspace";
+import { redirect } from "next/navigation";
 
-export default function Home() {
-  return <CRMWorkspace />;
+export default function Home(): never {
+  redirect("/dashboard");
 }

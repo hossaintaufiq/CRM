@@ -22,6 +22,7 @@ export interface Activity {
   action: string;
   target: string;
   at: string;
+  timestamp: number;
 }
 
 export interface Deal {
@@ -48,4 +49,30 @@ export interface Lead {
   score: number;
   lastTouch: string;
   timeline: string[];
+}
+
+export interface Contact {
+  id: string;
+  name: string;
+  company: string;
+  role: string;
+  email: string;
+  phone: string;
+  owner: string;
+}
+
+export interface NotificationItem {
+  id: string;
+  title: string;
+  description: string;
+  read: boolean;
+  timestamp: number;
+}
+
+export interface AutomationRule {
+  id: string;
+  name: string;
+  trigger: string;
+  status: "Active" | "Paused";
+  runsToday: number;
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Bell, Building2, Command, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,10 +8,12 @@ import { Avatar } from "@/components/ui/avatar";
 
 interface TopNavbarProps {
   onCommandPaletteOpen: () => void;
+  unreadNotifications: number;
 }
 
 export function TopNavbar({
   onCommandPaletteOpen,
+  unreadNotifications,
 }: TopNavbarProps): React.JSX.Element {
   return (
     <header className="flex h-16 items-center justify-between border-b border-border bg-background/95 px-6 backdrop-blur">
@@ -28,9 +31,16 @@ export function TopNavbar({
       </button>
 
       <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" aria-label="Notifications hub">
-          <Bell className="h-4 w-4" />
-        </Button>
+        <Link href="/notifications" className="relative">
+          <Button variant="ghost" size="icon" aria-label="Notifications hub">
+            <Bell className="h-4 w-4" />
+          </Button>
+          {unreadNotifications > 0 ? (
+            <span className="absolute -right-1 -top-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-white">
+              {unreadNotifications}
+            </span>
+          ) : null}
+        </Link>
         <div className="flex items-center gap-2 rounded-md border border-border bg-card px-3 py-1.5">
           <Building2 className="h-4 w-4 text-muted-foreground" />
           <Input

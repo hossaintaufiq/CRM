@@ -1,17 +1,18 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useMemo, useState, useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { Mail, NotebookPen, Phone } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { Lead } from "@/types/crm";
+import { Input } from "@/components/ui/input";
+import type { Lead, LeadStatus } from "@/types/crm";
 
 interface LeadManagementGridProps {
   leads: Lead[];
   selectedLead: Lead | null;
   onSelectLead: (leadId: string) => void;
   onCloseDetail: () => void;
+  onUpdateLeadStatus: (leadId: string, status: LeadStatus) => void;
 }
 
 export function LeadManagementGrid({
@@ -19,8 +20,31 @@ export function LeadManagementGrid({
   selectedLead,
   onSelectLead,
   onCloseDetail,
+  onUpdateLeadStatus,
 }: LeadManagementGridProps): React.JSX.Element {
   const drawerRef = useRef<HTMLElement>(null);
+  const [query, setQuery] = useState("");
+  const [sortBy, setSortBy] = useState<"score" | "name" | "lastTouch">("score");
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+
+  const sortedLeads = useMemo(() => {
+    const filtered = leads.filter(
+      (lead) =>
+        lead.name.toLowerCase().includes(query.toLowerCase()) ||
+        lead.company.toLowerCase().includes(query.toLowerCase()),
+    );
+    return [...filtered].sort((a, b) => {
+      if (sortBy === "name") return a.name.localeCompare(b.name);
+      if (sortBy === "lastTouch") return a.lastTouch.localeCompare(b.lastTouch);
+      return b.score - a.score;
+    });
+  }, [leads, query, sortBy]);
+
+  function toggleRow(id: string): void {
+    setSelectedRows((current) =>
+      current.includes(id) ? current.filter((row) => row !== id) : [...current, id],
+    );
+  }
 
   useLayoutEffect(() => {
     const drawer = drawerRef.current;
@@ -58,10 +82,33 @@ export function LeadManagementGrid({
   return (
     <section className="relative rounded-lg border border-border bg-card p-5">
       <h2 className="mb-4 text-lg font-semibold">Advanced Lead Management Grid</h2>
+      <div className="mb-3 flex items-center gap-2">
+        <Input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Search leads or companies"
+          className="max-w-xs"
+        />
+        <select
+          className="focus-ring h-9 rounded-md border border-border bg-background px-3 text-sm"
+          value={sortBy}
+          onChange={(event) =>
+            setSortBy(event.target.value as "score" | "name" | "lastTouch")
+          }
+        >
+          <option value="score">Sort by score</option>
+          <option value="name">Sort by name</option>
+          <option value="lastTouch">Sort by last touch</option>
+        </select>
+        <p className="text-xs text-muted-foreground">
+          {selectedRows.length} selected
+        </p>
+      </div>
       <div className="overflow-hidden rounded-md border border-border">
         <table className="w-full text-left text-sm">
           <thead className="bg-muted/60 text-muted-foreground">
             <tr>
+              <th className="px-4 py-3">Select</th>
               <th className="px-4 py-3">Lead</th>
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3">Score</th>
@@ -70,18 +117,42 @@ export function LeadManagementGrid({
             </tr>
           </thead>
           <tbody>
-            {leads.map((lead) => (
+            {sortedLeads.map((lead) => (
               <tr
                 key={lead.id}
-                onClick={() => onSelectLead(lead.id)}
                 className="cursor-pointer border-t border-border hover:bg-muted/40"
               >
                 <td className="px-4 py-3">
-                  <p className="font-medium">{lead.name}</p>
+                  <input
+                    type="checkbox"
+                    checked={selectedRows.includes(lead.id)}
+                    onChange={() => toggleRow(lead.id)}
+                    aria-label={`Select ${lead.name}`}
+                  />
+                </td>
+                <td className="px-4 py-3">
+                  <button
+                    type="button"
+                    onClick={() => onSelectLead(lead.id)}
+                    className="text-left"
+                  >
+                    <p className="font-medium">{lead.name}</p>
+                  </button>
                   <p className="text-xs text-muted-foreground">{lead.company}</p>
                 </td>
                 <td className="px-4 py-3">
-                  <Badge>{lead.status}</Badge>
+                  <select
+                    value={lead.status}
+                    className="focus-ring h-8 rounded-md border border-border bg-background px-2 text-xs"
+                    onChange={(event) =>
+                      onUpdateLeadStatus(lead.id, event.target.value as LeadStatus)
+                    }
+                  >
+                    <option value="New">New</option>
+                    <option value="Working">Working</option>
+                    <option value="Qualified">Qualified</option>
+                    <option value="Disqualified">Disqualified</option>
+                  </select>
                 </td>
                 <td className="px-4 py-3">{lead.score}</td>
                 <td className="px-4 py-3 text-muted-foreground">{lead.lastTouch}</td>
