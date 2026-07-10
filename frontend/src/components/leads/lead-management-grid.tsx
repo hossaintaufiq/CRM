@@ -201,7 +201,7 @@ export function LeadManagementGrid({
                       checked={selectedRows.includes(lead.id)}
                       onChange={() => toggleRow(lead.id)}
                       aria-label={`Select ${lead.name}`}
-                      className="accent-[rgb(8_145_178)]"
+                      className="accent-[rgb(184_134_11)]"
                     />
                   </td>
                   <td className="px-4 py-3.5">

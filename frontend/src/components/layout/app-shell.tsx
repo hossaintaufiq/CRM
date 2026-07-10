@@ -13,6 +13,7 @@ import {
   LayoutDashboard,
   PanelLeftClose,
   Settings,
+  Sparkles,
   Workflow,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -32,6 +33,7 @@ const navItems = [
   { icon: Contact2, label: "Contacts", href: "/contacts" },
   { icon: BarChart3, label: "Analytics", href: "/analytics" },
   { icon: Bot, label: "Automations", href: "/automations" },
+  { icon: Sparkles, label: "Features", href: "/features" },
   { icon: Settings, label: "Settings", href: "/settings" },
 ] as const;
 
@@ -91,9 +93,9 @@ export function AppShell({
       >
         <div className="mb-6 flex items-center justify-between px-1">
           <div className="flex min-w-0 items-center gap-2.5">
-            <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-foreground text-background">
+            <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-foreground text-gold">
               <Hexagon className="h-4 w-4" strokeWidth={2.25} />
-              <span className="absolute inset-0 rounded-md ring-1 ring-inset ring-white/10" />
+              <span className="absolute inset-0 rounded-md ring-1 ring-inset ring-gold/30" />
             </div>
             <div data-link-label className="min-w-0">
               <p className="truncate text-sm font-semibold tracking-tight text-sidebar-foreground">

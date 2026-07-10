@@ -13,9 +13,9 @@ interface SparklineProps {
 }
 
 const toneStroke: Record<NonNullable<SparklineProps["tone"]>, string> = {
-  primary: "rgb(8 145 178)",
+  primary: "rgb(184 134 11)",
   success: "rgb(5 150 105)",
-  warning: "rgb(217 119 6)",
+  warning: "rgb(180 120 20)",
 };
 
 export function Sparkline({

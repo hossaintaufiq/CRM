@@ -1,0 +1,311 @@
+{
+  "organizations": [
+    {
+      "id": "dd89d1af-4baf-441f-a766-52e1f2bf50d3",
+      "name": "Northstar Ventures",
+      "defaultCurrency": "USD",
+      "fiscalYearStart": "January",
+      "createdAt": "2026-07-10T15:02:47.429Z"
+    }
+  ],
+  "users": [
+    {
+      "id": "05ab45fd-726f-4afb-8b27-4cab30deea57",
+      "email": "admin@nexus.crm",
+      "fullName": "Avery Blake",
+      "passwordHash": "$2b$10$huyqg9neMtS1GfBtAdYBruHPRdR2/3qLYf4wEzCdNfdFUknlmRuha",
+      "role": "Admin",
+      "department": "Operations",
+      "team": "Leadership",
+      "status": "active",
+      "organizationId": "dd89d1af-4baf-441f-a766-52e1f2bf50d3",
+      "emailVerified": true,
+      "mfaEnabled": false,
+      "createdAt": "2026-07-10T15:02:47.429Z"
+    },
+    {
+      "id": "f11ae133-38f6-419d-9c5f-a120d7d9fb68",
+      "email": "sales@nexus.crm",
+      "fullName": "Jules Tan",
+      "passwordHash": "$2b$10$ZbxAKhJfFdwnZsubKqf3t.LB8yoBPWvHuqWF57vu7FKDNpmuHJYre",
+      "role": "Sales",
+      "department": "Sales",
+      "team": "Enterprise",
+      "status": "active",
+      "organizationId": "dd89d1af-4baf-441f-a766-52e1f2bf50d3",
+      "emailVerified": true,
+      "mfaEnabled": false,
+      "createdAt": "2026-07-10T15:02:47.429Z"
+    }
+  ],
+  "leads": [
+    {
+      "id": "3e2969c0-dea1-4191-99ae-7ff6e59fc168",
+      "name": "Maya Patel",
+      "company": "Nordic Forge",
+      "email": "maya@nordicforge.io",
+      "phone": "+1 415 555 0192",
+      "source": "Inbound",
+      "status": "Working",
+      "score": 82,
+      "ownerId": "05ab45fd-726f-4afb-8b27-4cab30deea57",
+      "timeline": [
+        "Downloaded whitepaper",
+        "Booked qualification call"
+      ],
+      "createdAt": "2026-07-10T15:02:47.429Z",
+      "updatedAt": "2026-07-10T15:02:47.429Z"
+    },
+    {
+      "id": "45bf4db6-1001-4dfb-94a5-8ef424d96a99",
+      "name": "Rafael Kim",
+      "company": "OrbitIQ",
+      "email": "rafael@orbitiq.dev",
+      "phone": "+1 415 555 0113",
+      "source": "Outbound",
+      "status": "New",
+      "score": 64,
+      "ownerId": "f11ae133-38f6-419d-9c5f-a120d7d9fb68",
+      "timeline": [
+        "Clicked campaign CTA"
+      ],
+      "createdAt": "2026-07-10T15:02:47.429Z",
+      "updatedAt": "2026-07-10T15:02:47.429Z"
+    }
+  ],
+  "deals": [
+    {
+      "id": "53a18fb7-7f5c-4ed5-b2c2-dda87aefaaf6",
+      "title": "Enterprise platform expansion",
+      "companyName": "Northwind Labs",
+      "value": 92000,
+      "currency": "USD",
+      "healthScore": "Hot",
+      "priority": "High",
+      "probability": 75,
+      "ownerName": "Avery Blake",
+      "ownerInitials": "AB",
+      "stage": "Negotiation",
+      "closeDate": "2026-07-28",
+      "tags": [
+        "Enterprise",
+        "Expansion"
+      ],
+      "notes": "Legal review in progress.",
+      "createdAt": "2026-07-10T15:02:47.429Z",
+      "updatedAt": "2026-07-10T15:02:47.429Z"
+    },
+    {
+      "id": "e4457563-fbdb-44e2-afd3-906af156c4a1",
+      "title": "RevOps suite rollout",
+      "companyName": "Altair Cloud",
+      "value": 48000,
+      "currency": "USD",
+      "healthScore": "Warm",
+      "priority": "Medium",
+      "probability": 55,
+      "ownerName": "Jules Tan",
+      "ownerInitials": "JT",
+      "stage": "Proposal",
+      "closeDate": "2026-08-15",
+      "tags": [
+        "Mid-market"
+      ],
+      "notes": "Proposal v2 sent.",
+      "createdAt": "2026-07-10T15:02:47.429Z",
+      "updatedAt": "2026-07-10T15:02:47.429Z"
+    },
+    {
+      "id": "58bb8359-c6e3-4f61-b64a-5d369faef3ee",
+      "title": "AI copilots pilot",
+      "companyName": "ForgePoint AI",
+      "value": 64000,
+      "currency": "USD",
+      "healthScore": "Warm",
+      "priority": "Medium",
+      "probability": 20,
+      "ownerName": "Jules Tan",
+      "ownerInitials": "JT",
+      "stage": "Lead",
+      "closeDate": "2026-08-29",
+      "tags": [
+        "Pilot",
+        "AI"
+      ],
+      "notes": "Inbound demo request.",
+      "createdAt": "2026-07-10T15:02:47.429Z",
+      "updatedAt": "2026-07-10T15:02:47.429Z"
+    },
+    {
+      "id": "4ef64512-3bd3-434e-9c94-e46e997ab305",
+      "title": "Annual data platform renewal",
+      "companyName": "Summit Dataworks",
+      "value": 210000,
+      "currency": "USD",
+      "healthScore": "Hot",
+      "priority": "Critical",
+      "probability": 100,
+      "ownerName": "Avery Blake",
+      "ownerInitials": "AB",
+      "stage": "Closed Won",
+      "closeDate": "2026-07-10",
+      "tags": [
+        "Renewal"
+      ],
+      "notes": "Signed.",
+      "createdAt": "2026-07-10T15:02:47.429Z",
+      "updatedAt": "2026-07-10T15:02:47.429Z"
+    }
+  ],
+  "contacts": [
+    {
+      "id": "72e8958c-78c8-4ec7-8461-7e8932fb08e0",
+      "name": "Alicia Moore",
+      "company": "Northwind Labs",
+      "role": "VP Operations",
+      "email": "alicia@northwind.io",
+      "phone": "+1 415 555 0170",
+      "owner": "Avery Blake",
+      "createdAt": "2026-07-10T15:02:47.429Z"
+    },
+    {
+      "id": "240ccdba-6b09-4700-aec0-a3b76813de75",
+      "name": "Derek Lin",
+      "company": "Altair Cloud",
+      "role": "Head of RevOps",
+      "email": "derek@altaircloud.com",
+      "phone": "+1 415 555 0178",
+      "owner": "Jules Tan",
+      "createdAt": "2026-07-10T15:02:47.429Z"
+    }
+  ],
+  "companies": [
+    {
+      "id": "b7d08070-edc2-42d6-ab18-b3c527589b7d",
+      "name": "Northwind Labs",
+      "industry": "SaaS",
+      "employees": 420,
+      "revenue": 48000000,
+      "website": "https://northwind.io",
+      "parentCompanyId": null,
+      "createdAt": "2026-07-10T15:02:47.429Z"
+    },
+    {
+      "id": "d997f5d6-75a9-4642-8a19-92783c1c4b15",
+      "name": "Altair Cloud",
+      "industry": "Cloud Infrastructure",
+      "employees": 180,
+      "revenue": 22000000,
+      "website": "https://altaircloud.com",
+      "parentCompanyId": null,
+      "createdAt": "2026-07-10T15:02:47.429Z"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "16e3229b-8332-4711-9369-cd68471cd237",
+      "title": "Send security packet to Northwind",
+      "description": "Include SOC2 + DPA",
+      "assignee": "Avery Blake",
+      "priority": "High",
+      "status": "Todo",
+      "dueDate": "2026-07-12",
+      "createdAt": "2026-07-10T15:02:47.429Z"
+    }
+  ],
+  "activities": [
+    {
+      "id": "5d9c7893-a16b-4ed0-a8be-dfd286521b83",
+      "actor": "Avery Blake",
+      "action": "seeded workspace",
+      "target": "Nexus CRM",
+      "timestamp": 1783695767565
+    }
+  ],
+  "notifications": [
+    {
+      "id": "582f4cd7-139b-4cfe-ac5a-4f136d1e99bf",
+      "title": "Welcome to Nexus",
+      "description": "Express backend is live with demo seed data.",
+      "read": false,
+      "userId": "05ab45fd-726f-4afb-8b27-4cab30deea57",
+      "timestamp": 1783695767565
+    }
+  ],
+  "automations": [
+    {
+      "id": "2daed8cf-59ea-4415-a0d1-e5bdc747df3d",
+      "name": "Inbound lead routing",
+      "trigger": "New inbound lead",
+      "status": "Active",
+      "runsToday": 17
+    },
+    {
+      "id": "700c53b9-583d-47c2-8a7f-62314d92677a",
+      "name": "Proposal follow-up",
+      "trigger": "Proposal sent + 48h no reply",
+      "status": "Active",
+      "runsToday": 9
+    },
+    {
+      "id": "a71ddcc2-37bf-4cc3-af75-1550da206a63",
+      "name": "Dormant deal reminder",
+      "trigger": "No activity for 7 days",
+      "status": "Paused",
+      "runsToday": 0
+    }
+  ],
+  "pipelineStages": [
+    {
+      "id": "Lead",
+      "label": "Lead",
+      "color": "#64748b",
+      "visible": true,
+      "order": 0
+    },
+    {
+      "id": "Qualified",
+      "label": "Qualified",
+      "color": "#C9A227",
+      "visible": true,
+      "order": 1
+    },
+    {
+      "id": "Proposal",
+      "label": "Proposal",
+      "color": "#0d9488",
+      "visible": true,
+      "order": 2
+    },
+    {
+      "id": "Negotiation",
+      "label": "Negotiation",
+      "color": "#B8860B",
+      "visible": true,
+      "order": 3
+    },
+    {
+      "id": "Closed Won",
+      "label": "Closed Won",
+      "color": "#059669",
+      "visible": true,
+      "order": 4
+    },
+    {
+      "id": "Closed Lost",
+      "label": "Closed Lost",
+      "color": "#dc2626",
+      "visible": true,
+      "order": 5
+    }
+  ],
+  "pipelinePreferences": {
+    "viewMode": "board",
+    "compactCards": false,
+    "showProbability": true,
+    "showCloseDate": true,
+    "showTags": true,
+    "defaultSort": "value"
+  },
+  "auditLogs": []
+}

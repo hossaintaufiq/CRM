@@ -116,7 +116,7 @@ export function EnterpriseKanban({
                     onClick={() => cycleStage(deal)}
                     className={cn(
                       "focus-ring group w-full rounded-md border border-border/80 bg-card p-3 text-left shadow-[0_1px_0_rgb(15_23_32_/_0.03)] transition-all",
-                      "hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_10px_24px_-14px_rgb(8_145_178_/_0.45)]",
+                      "hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_10px_24px_-14px_rgb(184_134_11_/_0.45)]",
                     )}
                   >
                     <div className="flex items-start justify-between gap-2">

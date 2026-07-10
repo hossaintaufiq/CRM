@@ -63,8 +63,8 @@ export function PremiumAreaChart({
       >
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="rgb(8 145 178)" stopOpacity="0.32" />
-            <stop offset="100%" stopColor="rgb(8 145 178)" stopOpacity="0" />
+            <stop offset="0%" stopColor="rgb(184 134 11)" stopOpacity="0.32" />
+            <stop offset="100%" stopColor="rgb(184 134 11)" stopOpacity="0" />
           </linearGradient>
         </defs>
         {[0.25, 0.5, 0.75].map((ratio) => (
@@ -82,7 +82,7 @@ export function PremiumAreaChart({
         <path
           d={line}
           fill="none"
-          stroke="rgb(8 145 178)"
+          stroke="rgb(184 134 11)"
           strokeWidth="2.25"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -93,7 +93,7 @@ export function PremiumAreaChart({
               cx={point.x}
               cy={point.y}
               r={active === index ? 4.5 : 3}
-              fill="rgb(8 145 178)"
+              fill="rgb(184 134 11)"
               className="transition-all"
             />
             <rect

@@ -9,9 +9,18 @@
  */
 
 export const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8001";
 
 export const API_ENDPOINTS = {
+  /** POST — email/password login */
+  authLogin: "/api/v1/auth/login",
+  /** POST — register */
+  authRegister: "/api/v1/auth/register",
+  /** GET — current user */
+  authMe: "/api/v1/auth/me",
+  /** POST — OAuth start `/api/v1/auth/oauth/:provider/start` */
+  authOAuthStart: (provider: string) => `/api/v1/auth/oauth/${provider}/start`,
+
   /** GET — dashboard KPIs + summary aggregates */
   dashboardSummary: "/api/v1/dashboard/summary",
 
@@ -64,6 +73,10 @@ export const API_ENDPOINTS = {
 
   /** GET | PUT — org / workspace settings */
   workspaceSettings: "/api/v1/settings/workspace",
+
+  /** GET — enterprise feature matrix */
+  modulesFeatures: "/api/v1/modules/features",
+  modulesFeaturesSummary: "/api/v1/modules/features/summary",
 } as const;
 
 export type ApiEndpointKey = keyof typeof API_ENDPOINTS;
