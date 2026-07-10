@@ -35,7 +35,7 @@ function CardTitle({
   return (
     <h3
       data-slot="card-title"
-      className={cn("text-[15px] font-semibold leading-none tracking-tight", className)}
+      className={cn("text-[15px] font-semibold leading-snug tracking-tight text-foreground", className)}
       {...props}
     />
   );
@@ -48,7 +48,7 @@ function CardDescription({
   return (
     <p
       data-slot="card-description"
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-[15px] leading-relaxed text-muted-foreground", className)}
       {...props}
     />
   );
@@ -69,7 +69,7 @@ function CardMeta({
     <div
       data-slot="card-meta"
       className={cn(
-        "flex items-center justify-between gap-3 border-t border-border/60 px-5 py-3 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground",
+        "flex items-center justify-between gap-3 border-t border-border/60 px-5 py-3 font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground",
         className,
       )}
       {...props}

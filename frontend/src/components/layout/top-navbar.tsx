@@ -22,11 +22,11 @@ export function TopNavbar({
       <button
         type="button"
         onClick={onCommandPaletteOpen}
-        className="focus-ring flex w-[420px] items-center gap-2 rounded-md border border-border/80 bg-card/80 px-3 py-2 text-sm text-muted-foreground shadow-[0_1px_0_rgb(15_23_32_/_0.03)] transition-colors hover:border-primary/30 hover:text-foreground"
+        className="focus-ring flex w-[420px] items-center gap-2 rounded-md border border-border/80 bg-card/80 px-3 py-2 text-[15px] text-muted-foreground shadow-[0_1px_0_rgb(15_23_32_/_0.03)] transition-colors hover:border-gold/35 hover:text-foreground"
       >
-        <Search className="h-4 w-4 text-primary/70" />
+        <Search className="h-4 w-4 text-gold-deep/80" />
         <span>Search leads, deals, contacts...</span>
-        <kbd className="ml-auto inline-flex items-center gap-0.5 rounded border border-border bg-muted/80 px-1.5 py-0.5 font-mono text-[10px] text-foreground">
+        <kbd className="ml-auto inline-flex items-center gap-0.5 rounded border border-border bg-muted/80 px-1.5 py-0.5 font-mono text-[11px] font-medium text-foreground">
           <Command className="h-3 w-3" />
           K
         </kbd>
@@ -44,9 +44,9 @@ export function TopNavbar({
           ) : null}
         </Link>
         <div className="flex items-center gap-2 rounded-md border border-border/80 bg-card/80 px-3 py-1.5 shadow-[0_1px_0_rgb(15_23_32_/_0.03)]">
-          <Building2 className="h-4 w-4 text-primary" />
+          <Building2 className="h-4 w-4 text-gold-deep" />
           <div className="min-w-0">
-            <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
+            <p className="font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground">
               Workspace
             </p>
             <Input

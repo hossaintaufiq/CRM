@@ -119,7 +119,7 @@ export function DealDetailDrawer({
                 min={0}
                 max={100}
                 value={deal.probability}
-                className="w-full accent-[rgb(184_134_11)]"
+                className="w-full accent-[rgb(148_118_74)]"
                 onChange={(e) =>
                   onQuickUpdate(deal.id, { probability: Number(e.target.value) })
                 }

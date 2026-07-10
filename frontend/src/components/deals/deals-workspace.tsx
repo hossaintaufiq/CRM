@@ -328,7 +328,7 @@ export function DealsWorkspace({
                       data-deal-card
                       className={cn(
                         "group rounded-md border border-border/80 bg-card p-3 shadow-[0_1px_0_rgb(15_23_32_/_0.03)] transition-all",
-                        "hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_10px_24px_-14px_rgb(184_134_11_/_0.45)]",
+                        "hover:-translate-y-0.5 hover:border-gold/40 hover:shadow-[0_10px_24px_-14px_rgb(15_20_25_/_0.18)]",
                         pipelinePreferences.compactCards && "p-2.5",
                         selectedDeal?.id === deal.id && "border-primary/50 ring-1 ring-primary/20",
                       )}

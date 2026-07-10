@@ -26,7 +26,7 @@ const statusMeta: Record<
   },
   partial: {
     label: "Partial",
-    className: "border-gold/30 bg-accent-soft text-gold-deep",
+    className: "border-gold/35 bg-accent-soft text-foreground",
     badge: "warning",
   },
   stub: {

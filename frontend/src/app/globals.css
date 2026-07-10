@@ -1,25 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  --background: 248 246 241;
-  --foreground: 20 16 12;
-  --card: 255 253 248;
-  --card-foreground: 20 16 12;
-  --primary: 184 134 11;
-  --primary-foreground: 255 250 240;
-  --muted: 240 234 222;
-  --muted-foreground: 110 98 82;
-  --border: 224 212 190;
-  --ring: 201 162 39;
-  --sidebar: 252 250 245;
-  --sidebar-foreground: 36 28 20;
-  --success: 5 150 105;
-  --warning: 180 120 20;
-  --destructive: 185 45 45;
-  --accent-soft: 245 232 196;
-  --gold: 201 162 39;
-  --gold-deep: 146 104 18;
-  --grid-line: 20 16 12;
+  /* Ink + stone + soft brass — high contrast, easy on the eyes */
+  --background: 246 247 249;
+  --foreground: 15 20 25;
+  --card: 255 255 255;
+  --card-foreground: 15 20 25;
+  --primary: 15 20 25;
+  --primary-foreground: 255 255 255;
+  --muted: 236 238 242;
+  --muted-foreground: 68 76 88;
+  --border: 214 218 226;
+  --ring: 154 123 79;
+  --sidebar: 252 252 253;
+  --sidebar-foreground: 22 28 36;
+  --success: 12 128 92;
+  --warning: 168 108 24;
+  --destructive: 180 40 40;
+  --accent-soft: 246 242 234;
+  --gold: 148 118 74;
+  --gold-deep: 108 82 44;
+  --grid-line: 15 20 25;
   --surface-shine: 255 255 255;
 }
 
@@ -44,32 +45,32 @@
   --color-gold-deep: rgb(var(--gold-deep));
   --font-sans: var(--font-outfit);
   --font-mono: var(--font-jetbrains);
-  --radius-lg: 0.875rem;
-  --radius-md: 0.625rem;
+  --radius-lg: 0.75rem;
+  --radius-md: 0.5rem;
   --radius-sm: 0.375rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: 14 12 10;
-    --foreground: 245 236 220;
-    --card: 24 20 16;
-    --card-foreground: 245 236 220;
-    --primary: 212 175 55;
-    --primary-foreground: 20 16 10;
-    --muted: 40 34 28;
-    --muted-foreground: 168 152 130;
-    --border: 58 48 36;
-    --ring: 212 175 55;
-    --sidebar: 18 15 12;
-    --sidebar-foreground: 245 236 220;
-    --success: 52 211 153;
-    --warning: 251 191 36;
-    --destructive: 248 113 113;
-    --accent-soft: 58 45 20;
-    --gold: 212 175 55;
-    --gold-deep: 184 134 11;
-    --grid-line: 245 236 220;
+    --background: 12 14 18;
+    --foreground: 240 242 245;
+    --card: 20 23 28;
+    --card-foreground: 240 242 245;
+    --primary: 240 242 245;
+    --primary-foreground: 12 14 18;
+    --muted: 32 36 44;
+    --muted-foreground: 176 184 196;
+    --border: 48 54 64;
+    --ring: 196 164 110;
+    --sidebar: 16 18 22;
+    --sidebar-foreground: 244 246 248;
+    --success: 72 196 140;
+    --warning: 220 170 70;
+    --destructive: 236 110 110;
+    --accent-soft: 42 36 28;
+    --gold: 196 164 110;
+    --gold-deep: 210 180 130;
+    --grid-line: 240 242 245;
     --surface-shine: 255 255 255;
   }
 }
@@ -77,38 +78,62 @@
 body {
   background-color: rgb(var(--background));
   background-image:
-    radial-gradient(ellipse 100% 60% at 0% -15%, rgb(201 162 39 / 0.14), transparent 55%),
-    radial-gradient(ellipse 60% 40% at 100% 0%, rgb(20 16 12 / 0.05), transparent 50%),
-    linear-gradient(rgb(var(--grid-line) / 0.028) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(var(--grid-line) / 0.028) 1px, transparent 1px);
-  background-size: auto, auto, 56px 56px, 56px 56px;
+    radial-gradient(ellipse 70% 45% at 0% -8%, rgb(148 118 74 / 0.045), transparent 55%),
+    radial-gradient(ellipse 45% 35% at 100% 0%, rgb(15 20 25 / 0.025), transparent 50%);
   background-attachment: fixed;
   color: rgb(var(--foreground));
   font-family: var(--font-outfit), ui-sans-serif, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
   letter-spacing: -0.011em;
+  font-weight: 450;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 * {
   border-color: rgb(var(--border));
 }
 
+h1,
+h2,
+h3,
+[data-slot="card-title"] {
+  color: rgb(var(--foreground));
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  line-height: 1.22;
+}
+
+p,
+li,
+td,
+th,
+label {
+  line-height: 1.55;
+}
+
+small,
+.meta-label {
+  color: rgb(var(--muted-foreground));
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.45;
+}
+
 .surface {
   position: relative;
-  border: 1px solid rgb(var(--border) / 0.9);
-  background:
-    linear-gradient(180deg, rgb(var(--surface-shine) / 0.55), transparent 28%),
-    rgb(var(--card) / 0.94);
+  border: 1px solid rgb(var(--border));
+  background: rgb(var(--card));
   color: rgb(var(--card-foreground));
   box-shadow:
-    0 1px 0 rgb(255 255 255 / 0.65) inset,
-    0 1px 0 rgb(20 16 12 / 0.03),
-    0 10px 28px -14px rgb(20 16 12 / 0.16);
-  backdrop-filter: blur(10px);
+    0 1px 0 rgb(255 255 255 / 0.8) inset,
+    0 8px 24px -16px rgb(15 20 25 / 0.12);
   transition:
-    border-color 180ms ease,
-    box-shadow 180ms ease,
-    transform 180ms ease;
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
 }
 
 .surface::before {
@@ -116,88 +141,112 @@ body {
   position: absolute;
   inset: 0 0 auto;
   height: 1px;
-  border-radius: inherit;
   background: linear-gradient(
     90deg,
-    transparent,
-    rgb(201 162 39 / 0.55),
-    transparent
+    transparent 5%,
+    rgb(154 123 79 / 0.35) 50%,
+    transparent 95%
   );
   pointer-events: none;
-  opacity: 0.85;
 }
 
 .surface-interactive:hover {
-  border-color: rgb(201 162 39 / 0.45);
+  border-color: rgb(154 123 79 / 0.35);
   box-shadow:
-    0 1px 0 rgb(255 255 255 / 0.7) inset,
-    0 1px 0 rgb(20 16 12 / 0.03),
-    0 16px 36px -16px rgb(184 134 11 / 0.28);
+    0 1px 0 rgb(255 255 255 / 0.9) inset,
+    0 12px 28px -14px rgb(15 20 25 / 0.16);
   transform: translateY(-1px);
 }
 
 .focus-ring {
-  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background;
 }
 
 .page-eyebrow {
-  @apply font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-gold-deep;
+  color: rgb(var(--gold-deep));
+  font-family: var(--font-jetbrains), ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .metric-value {
-  @apply font-mono text-[1.75rem] font-semibold leading-none tracking-tight tabular-nums;
+  color: rgb(var(--foreground));
+  font-family: var(--font-jetbrains), ui-monospace, monospace;
+  font-size: 1.75rem;
+  font-weight: 650;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
 }
 
 .nav-active {
-  background: linear-gradient(90deg, rgb(201 162 39 / 0.16), rgb(201 162 39 / 0.04));
+  background: rgb(var(--muted));
   box-shadow: inset 2px 0 0 rgb(var(--gold));
+  color: rgb(var(--foreground));
 }
 
 .chart-panel {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgb(var(--border) / 0.75);
+  border: 1px solid rgb(var(--border));
   border-radius: var(--radius-md);
   background:
-    linear-gradient(180deg, rgb(201 162 39 / 0.07), transparent 42%),
-    rgb(var(--muted) / 0.35);
+    linear-gradient(180deg, rgb(154 123 79 / 0.04), transparent 40%),
+    rgb(var(--muted) / 0.45);
 }
 
 .chart-panel::after {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(rgb(110 98 82 / 0.12) 1px, transparent 1px);
+  background-image: linear-gradient(rgb(82 90 102 / 0.1) 1px, transparent 1px);
   background-size: 100% 25%;
   pointer-events: none;
-  mask-image: linear-gradient(180deg, rgb(0 0 0 / 0.55), transparent 90%);
+  mask-image: linear-gradient(180deg, rgb(0 0 0 / 0.45), transparent 90%);
 }
 
 .gold-chip {
-  @apply inline-flex items-center rounded border border-gold/30 bg-accent-soft px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.1em] text-gold-deep;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgb(var(--gold) / 0.32);
+  border-radius: 0.375rem;
+  background: rgb(var(--accent-soft));
+  padding: 0.25rem 0.6rem;
+  color: rgb(var(--gold-deep));
+  font-family: var(--font-jetbrains), ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.text-readable {
+  color: rgb(var(--foreground));
+}
+
+.text-secondary {
+  color: rgb(var(--muted-foreground));
 }
 
 @media (prefers-color-scheme: dark) {
-  .nav-active {
-    background: linear-gradient(90deg, rgb(212 175 55 / 0.18), rgb(212 175 55 / 0.04));
-  }
-
   .surface {
     box-shadow:
-      0 1px 0 rgb(255 255 255 / 0.05) inset,
-      0 12px 36px -18px rgb(0 0 0 / 0.65);
+      0 1px 0 rgb(255 255 255 / 0.04) inset,
+      0 12px 32px -18px rgb(0 0 0 / 0.55);
   }
 
   .surface::before {
     background: linear-gradient(
       90deg,
-      transparent,
-      rgb(212 175 55 / 0.5),
-      transparent
+      transparent 5%,
+      rgb(196 164 110 / 0.35) 50%,
+      transparent 95%
     );
   }
 
-  .page-eyebrow {
-    @apply text-gold;
+  .nav-active {
+    background: rgb(var(--muted));
   }
 }

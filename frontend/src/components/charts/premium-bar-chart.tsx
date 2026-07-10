@@ -124,12 +124,12 @@ export function PremiumBarChart({
                   ) : null}
                   <span
                     className={cn(
-                      "w-[42%] rounded-t-sm bg-gradient-to-t from-primary/70 to-primary shadow-[0_-6px_16px_-8px_rgb(184_134_11_/_0.55)] transition-all duration-300",
-                      isActive && "from-primary to-cyan-300 brightness-110",
+                      "w-[42%] rounded-t-sm bg-gradient-to-t from-primary/70 to-primary shadow-[0_-6px_16px_-8px_rgb(148_118_74_/_0.35)] transition-all duration-300",
+                      isActive && "from-primary to-gold brightness-105",
                     )}
                     style={{
                       height: Math.max(primaryH, 4),
-                      backgroundImage: `linear-gradient(180deg, rgb(184 134 11), rgb(8 145 178 / 0.55))`,
+                      backgroundImage: `linear-gradient(180deg, rgb(148 118 74), rgb(15 20 25 / 0.75))`,
                     }}
                   />
                 </button>
@@ -144,7 +144,7 @@ export function PremiumBarChart({
             {data.map((point) => (
               <span
                 key={point.label}
-                className="text-center font-mono text-[10px] text-muted-foreground"
+                className="text-center font-mono text-[11px] font-medium text-muted-foreground"
               >
                 {point.label}
               </span>
@@ -156,8 +156,8 @@ export function PremiumBarChart({
       <svg width="0" height="0" aria-hidden>
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="rgb(184 134 11)" />
-            <stop offset="100%" stopColor="rgb(184 134 11)" stopOpacity="0.45" />
+            <stop offset="0%" stopColor="rgb(148 118 74)" />
+            <stop offset="100%" stopColor="rgb(148 118 74)" stopOpacity="0.4" />
           </linearGradient>
         </defs>
       </svg>

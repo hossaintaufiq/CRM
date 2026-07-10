@@ -93,15 +93,15 @@ export function AppShell({
       >
         <div className="mb-6 flex items-center justify-between px-1">
           <div className="flex min-w-0 items-center gap-2.5">
-            <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-foreground text-gold">
+            <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-foreground text-primary-foreground">
               <Hexagon className="h-4 w-4" strokeWidth={2.25} />
-              <span className="absolute inset-0 rounded-md ring-1 ring-inset ring-gold/30" />
+              <span className="absolute inset-0 rounded-md ring-1 ring-inset ring-gold/40" />
             </div>
             <div data-link-label className="min-w-0">
               <p className="truncate text-sm font-semibold tracking-tight text-sidebar-foreground">
                 Nexus
               </p>
-              <p className="truncate font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+              <p className="truncate font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
                 Control Plane
               </p>
             </div>
@@ -118,7 +118,7 @@ export function AppShell({
 
         <p
           data-link-label
-          className="mb-2 px-3 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground"
+          className="mb-2 px-3 font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground"
         >
           Modules
         </p>
@@ -130,17 +130,17 @@ export function AppShell({
                 key={label}
                 href={href}
                 className={cn(
-                  "focus-ring flex h-10 w-full items-center gap-3 rounded-md px-3 text-sm text-sidebar-foreground/80 transition-colors hover:bg-muted/70 hover:text-sidebar-foreground",
+                  "focus-ring flex h-10 w-full items-center gap-3 rounded-md px-3 text-[15px] text-sidebar-foreground/85 transition-colors hover:bg-muted/70 hover:text-sidebar-foreground",
                   active && "nav-active text-sidebar-foreground",
                 )}
               >
                 <Icon
                   className={cn(
                     "h-4 w-4 shrink-0",
-                    active ? "text-primary" : "text-muted-foreground",
+                    active ? "text-gold-deep" : "text-muted-foreground",
                   )}
                 />
-                <span data-link-label className="truncate font-medium">
+                <span data-link-label className="truncate font-semibold tracking-tight">
                   {label}
                 </span>
               </Link>
@@ -152,10 +152,10 @@ export function AppShell({
           data-link-label
           className="absolute bottom-4 left-3 right-3 rounded-md border border-border/70 bg-muted/40 px-3 py-2.5"
         >
-          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+          <p className="font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
             System
           </p>
-          <p className="mt-1 text-xs text-sidebar-foreground">
+          <p className="mt-1 text-sm font-medium text-sidebar-foreground">
             <span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-success" />
             All pipelines synced
           </p>
