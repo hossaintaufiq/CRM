@@ -13,50 +13,65 @@ export default function AnalyticsPage(): React.JSX.Element {
       : 0;
 
   return (
-    <section className="space-y-4">
-      <h1 className="text-2xl font-semibold">Analytics</h1>
+    <section className="space-y-6">
+      <header className="space-y-2">
+        <p className="page-eyebrow">Telemetry</p>
+        <h1 className="text-3xl font-semibold tracking-tight">Analytics</h1>
+        <p className="text-sm text-muted-foreground">
+          Pipeline value, lead quality, and KPI trend instrumentation.
+        </p>
+      </header>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle>Total Pipeline Value</CardTitle>
+            <p className="page-eyebrow mb-2">Aggregate</p>
+            <CardTitle>Total pipeline value</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-semibold">${totalPipeline.toLocaleString()}</p>
+            <p className="metric-value">${totalPipeline.toLocaleString()}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Average Lead Score</CardTitle>
+            <p className="page-eyebrow mb-2">Quality</p>
+            <CardTitle>Average lead score</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-semibold">{avgLeadScore}</p>
+            <p className="metric-value">{avgLeadScore}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Live KPI Stream</CardTitle>
+            <p className="page-eyebrow mb-2">Stream</p>
+            <CardTitle>Live KPI feed</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              KPI trends are refreshed in realtime from demo state.
+              KPI trends refresh from demo state in realtime.
             </p>
           </CardContent>
         </Card>
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Metric Trend Monitor</CardTitle>
+          <p className="page-eyebrow mb-2">Monitor</p>
+          <CardTitle>Metric trend board</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {kpis.map((kpi) => (
-            <div key={kpi.id} className="rounded-md border border-border p-4">
-              <p className="text-sm text-muted-foreground">{kpi.label}</p>
-              <p className="mt-1 text-lg font-semibold">{kpi.value}</p>
+            <div
+              key={kpi.id}
+              className="rounded-md border border-border/70 bg-muted/20 p-4"
+            >
+              <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+                {kpi.label}
+              </p>
+              <p className="mt-1 font-mono text-lg font-semibold tabular-nums">{kpi.value}</p>
               <div className="mt-3 flex items-end gap-1">
                 {kpi.trend.map((point, index) => (
                   <span
                     key={`${kpi.id}-${index}`}
-                    className="w-2 rounded-full bg-primary/50"
+                    className="w-1.5 rounded-sm bg-primary/60"
                     style={{ height: `${Math.max(6, Math.floor(point / 2))}px` }}
                   />
                 ))}

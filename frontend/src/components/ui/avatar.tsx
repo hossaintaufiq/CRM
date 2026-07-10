@@ -9,7 +9,7 @@ export function Avatar({ initials, className, ...props }: AvatarProps): React.JS
   return (
     <div
       className={cn(
-        "flex h-8 w-8 items-center justify-center rounded-full border border-border bg-muted text-xs font-semibold text-foreground",
+        "flex h-8 w-8 items-center justify-center rounded-md border border-border bg-foreground font-mono text-[10px] font-semibold tracking-wide text-background",
         className,
       )}
       {...props}

@@ -8,23 +8,25 @@ interface KPICardProps {
 
 export function KPICard({ metric }: KPICardProps): React.JSX.Element {
   return (
-    <Card data-animate="stagger-in">
+    <Card data-animate="stagger-in" className="overflow-hidden">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{metric.label}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="mb-4 flex items-center justify-between">
-          <p className="text-2xl font-semibold">{metric.value}</p>
-          <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-1 text-xs font-medium text-success">
+        <div className="flex items-center justify-between gap-2">
+          <CardTitle className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+            {metric.label}
+          </CardTitle>
+          <span className="inline-flex items-center gap-0.5 rounded border border-success/20 bg-success/10 px-1.5 py-0.5 font-mono text-[10px] font-medium text-success">
             <ArrowUpRight className="h-3 w-3" />
             {metric.changeLabel}
           </span>
         </div>
+      </CardHeader>
+      <CardContent>
+        <p className="metric-value mb-4">{metric.value}</p>
         <div className="flex items-end gap-1">
           {metric.trend.map((point, index) => (
             <span
               key={`${metric.id}-${index}`}
-              className="w-2 rounded-full bg-primary/55"
+              className="w-1.5 rounded-sm bg-primary/70 transition-colors"
               style={{ height: `${Math.max(8, Math.floor(point / 2))}px` }}
             />
           ))}

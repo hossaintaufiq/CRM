@@ -80,40 +80,47 @@ export function LeadManagementGrid({
   }, [selectedLead]);
 
   return (
-    <section className="relative rounded-lg border border-border bg-card p-5">
-      <h2 className="mb-4 text-lg font-semibold">Advanced Lead Management Grid</h2>
-      <div className="mb-3 flex items-center gap-2">
-        <Input
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search leads or companies"
-          className="max-w-xs"
-        />
-        <select
-          className="focus-ring h-9 rounded-md border border-border bg-background px-3 text-sm"
-          value={sortBy}
-          onChange={(event) =>
-            setSortBy(event.target.value as "score" | "name" | "lastTouch")
-          }
-        >
-          <option value="score">Sort by score</option>
-          <option value="name">Sort by name</option>
-          <option value="lastTouch">Sort by last touch</option>
-        </select>
-        <p className="text-xs text-muted-foreground">
-          {selectedRows.length} selected
+    <section className="relative space-y-4">
+      <header className="space-y-2">
+        <p className="page-eyebrow">Inbound engine</p>
+        <h1 className="text-3xl font-semibold tracking-tight">Lead management</h1>
+        <p className="text-sm text-muted-foreground">
+          Score, qualify, and action high-intent accounts from one grid.
         </p>
-      </div>
-      <div className="overflow-hidden rounded-md border border-border">
+      </header>
+      <div className="surface relative rounded-lg p-5">
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          <Input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search leads or companies"
+            className="max-w-xs"
+          />
+          <select
+            className="focus-ring h-9 rounded-md border border-border bg-background px-3 text-sm"
+            value={sortBy}
+            onChange={(event) =>
+              setSortBy(event.target.value as "score" | "name" | "lastTouch")
+            }
+          >
+            <option value="score">Sort by score</option>
+            <option value="name">Sort by name</option>
+            <option value="lastTouch">Sort by last touch</option>
+          </select>
+          <p className="font-mono text-[11px] text-muted-foreground">
+            {selectedRows.length} selected
+          </p>
+        </div>
+      <div className="overflow-hidden rounded-md border border-border/80">
         <table className="w-full text-left text-sm">
-          <thead className="bg-muted/60 text-muted-foreground">
+          <thead className="bg-muted/50 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
             <tr>
               <th className="px-4 py-3">Select</th>
               <th className="px-4 py-3">Lead</th>
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3">Score</th>
               <th className="px-4 py-3">Last Touch</th>
-              <th className="px-4 py-3">Quick Actions</th>
+              <th className="px-4 py-3">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -154,8 +161,10 @@ export function LeadManagementGrid({
                     <option value="Disqualified">Disqualified</option>
                   </select>
                 </td>
-                <td className="px-4 py-3">{lead.score}</td>
-                <td className="px-4 py-3 text-muted-foreground">{lead.lastTouch}</td>
+                <td className="px-4 py-3 font-mono tabular-nums">{lead.score}</td>
+                <td className="px-4 py-3 font-mono text-[11px] text-muted-foreground">
+                  {lead.lastTouch}
+                </td>
                 <td className="px-4 py-3">
                   <div className="flex gap-1">
                     <Button size="icon" variant="ghost" aria-label="Email lead">
@@ -186,16 +195,17 @@ export function LeadManagementGrid({
           />
           <aside
             ref={drawerRef}
-            className="absolute right-0 top-0 z-20 h-full w-[380px] border-l border-border bg-card p-5 shadow-xl"
+            className="absolute right-0 top-0 z-20 h-full w-[380px] border-l border-border bg-card/95 p-5 shadow-2xl backdrop-blur-xl"
           >
-            <h3 className="text-lg font-semibold">{selectedLead.name}</h3>
+            <p className="page-eyebrow">Lead dossier</p>
+            <h3 className="mt-2 text-lg font-semibold tracking-tight">{selectedLead.name}</h3>
             <p className="text-sm text-muted-foreground">{selectedLead.company}</p>
             <div className="mt-4 space-y-2">
               {selectedLead.timeline.map((item) => (
                 <div
                   key={item}
                   data-lead-item
-                  className="rounded-md border border-border bg-muted/40 p-3 text-sm"
+                  className="rounded-md border border-border/70 bg-muted/40 p-3 text-sm"
                 >
                   {item}
                 </div>
@@ -204,6 +214,7 @@ export function LeadManagementGrid({
           </aside>
         </>
       ) : null}
+      </div>
     </section>
   );
 }

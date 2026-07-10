@@ -6,23 +6,34 @@ import { Button } from "@/components/ui/button";
 
 export default function SettingsPage(): React.JSX.Element {
   return (
-    <section className="space-y-4">
-      <h1 className="text-2xl font-semibold">Settings</h1>
+    <section className="space-y-6">
+      <header className="space-y-2">
+        <p className="page-eyebrow">Configuration</p>
+        <h1 className="text-3xl font-semibold tracking-tight">Settings</h1>
+        <p className="text-sm text-muted-foreground">
+          Workspace defaults and organization preferences.
+        </p>
+      </header>
       <Card>
         <CardHeader>
-          <CardTitle>Organization Preferences</CardTitle>
+          <p className="page-eyebrow mb-2">Workspace</p>
+          <CardTitle>Organization preferences</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <label className="block space-y-2">
-            <span className="text-sm text-muted-foreground">Organization Name</span>
+            <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+              Organization name
+            </span>
             <Input defaultValue="Northstar Ventures" />
           </label>
           <label className="block space-y-2">
-            <span className="text-sm text-muted-foreground">Default Currency</span>
+            <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+              Default currency
+            </span>
             <Input defaultValue="USD" />
           </label>
           <div className="flex justify-end">
-            <Button>Save Changes</Button>
+            <Button>Save changes</Button>
           </div>
         </CardContent>
       </Card>

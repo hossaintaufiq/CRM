@@ -16,16 +16,16 @@ export function TopNavbar({
   unreadNotifications,
 }: TopNavbarProps): React.JSX.Element {
   return (
-    <header className="flex h-16 items-center justify-between border-b border-border bg-background/95 px-6 backdrop-blur">
+    <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-border/70 bg-background/75 px-6 backdrop-blur-xl">
       <button
         type="button"
         onClick={onCommandPaletteOpen}
-        className="focus-ring flex w-[420px] items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm text-muted-foreground"
+        className="focus-ring flex w-[420px] items-center gap-2 rounded-md border border-border/80 bg-card/80 px-3 py-2 text-sm text-muted-foreground shadow-[0_1px_0_rgb(15_23_32_/_0.03)] transition-colors hover:border-primary/30 hover:text-foreground"
       >
-        <Search className="h-4 w-4" />
+        <Search className="h-4 w-4 text-primary/70" />
         <span>Search leads, deals, contacts...</span>
-        <kbd className="ml-auto rounded border border-border bg-muted px-1.5 text-xs text-foreground">
-          <Command className="mr-0.5 inline h-3 w-3" />
+        <kbd className="ml-auto inline-flex items-center gap-0.5 rounded border border-border bg-muted/80 px-1.5 py-0.5 font-mono text-[10px] text-foreground">
+          <Command className="h-3 w-3" />
           K
         </kbd>
       </button>
@@ -36,19 +36,24 @@ export function TopNavbar({
             <Bell className="h-4 w-4" />
           </Button>
           {unreadNotifications > 0 ? (
-            <span className="absolute -right-1 -top-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-white">
+            <span className="absolute -right-0.5 -top-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded bg-destructive px-1 font-mono text-[10px] font-semibold text-white">
               {unreadNotifications}
             </span>
           ) : null}
         </Link>
-        <div className="flex items-center gap-2 rounded-md border border-border bg-card px-3 py-1.5">
-          <Building2 className="h-4 w-4 text-muted-foreground" />
-          <Input
-            className="h-7 w-[170px] border-0 bg-transparent px-0 focus-visible:ring-0"
-            value="Northstar Ventures"
-            readOnly
-            aria-label="Organization switcher"
-          />
+        <div className="flex items-center gap-2 rounded-md border border-border/80 bg-card/80 px-3 py-1.5 shadow-[0_1px_0_rgb(15_23_32_/_0.03)]">
+          <Building2 className="h-4 w-4 text-primary" />
+          <div className="min-w-0">
+            <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
+              Workspace
+            </p>
+            <Input
+              className="h-5 w-[150px] border-0 bg-transparent p-0 text-sm font-medium focus-visible:ring-0"
+              value="Northstar Ventures"
+              readOnly
+              aria-label="Organization switcher"
+            />
+          </div>
           <Avatar initials="AB" />
         </div>
       </div>

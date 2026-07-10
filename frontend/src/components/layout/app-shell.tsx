@@ -9,6 +9,7 @@ import {
   Bot,
   ChevronLeft,
   Contact2,
+  Hexagon,
   LayoutDashboard,
   PanelLeftClose,
   Settings,
@@ -26,7 +27,7 @@ interface AppShellProps {
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
   { icon: Contact2, label: "Leads", href: "/leads" },
-  { icon: Workflow, label: "Deals (Kanban)", href: "/deals" },
+  { icon: Workflow, label: "Deals", href: "/deals" },
   { icon: Contact2, label: "Contacts", href: "/contacts" },
   { icon: BarChart3, label: "Analytics", href: "/analytics" },
   { icon: Bot, label: "Automations", href: "/automations" },
@@ -81,18 +82,24 @@ export function AppShell({
   }, []);
 
   return (
-    <div ref={shellRef} className="relative min-h-screen bg-background text-foreground">
+    <div ref={shellRef} className="relative min-h-screen text-foreground">
       <aside
         data-sidebar
-        className="fixed inset-y-0 left-0 z-20 w-[268px] border-r border-border bg-sidebar px-3 py-4"
+        className="fixed inset-y-0 left-0 z-20 w-[268px] border-r border-border/70 bg-sidebar/85 px-3 py-4 backdrop-blur-xl"
       >
-        <div className="mb-5 flex items-center justify-between px-1">
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              CRM
+        <div className="mb-6 flex items-center justify-between px-1">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-foreground text-background">
+              <Hexagon className="h-4 w-4" strokeWidth={2.25} />
+              <span className="absolute inset-0 rounded-md ring-1 ring-inset ring-white/10" />
             </div>
-            <div data-link-label className="text-sm font-semibold text-sidebar-foreground">
-              Enterprise Console
+            <div data-link-label className="min-w-0">
+              <p className="truncate text-sm font-semibold tracking-tight text-sidebar-foreground">
+                Nexus
+              </p>
+              <p className="truncate font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                Control Plane
+              </p>
             </div>
           </div>
           <Button
@@ -105,23 +112,50 @@ export function AppShell({
           </Button>
         </div>
 
-        <nav className="space-y-1">
-          {navItems.map(({ icon: Icon, label, href }) => (
-            <Link
-              key={label}
-              href={href}
-              className={cn(
-                "focus-ring flex h-10 w-full items-center gap-3 rounded-md px-3 text-sm text-sidebar-foreground transition-colors hover:bg-muted",
-                pathname === href && "bg-muted",
-              )}
-            >
-              <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
-              <span data-link-label className="truncate">
-                {label}
-              </span>
-            </Link>
-          ))}
+        <p
+          data-link-label
+          className="mb-2 px-3 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground"
+        >
+          Modules
+        </p>
+        <nav className="space-y-0.5">
+          {navItems.map(({ icon: Icon, label, href }) => {
+            const active = pathname === href;
+            return (
+              <Link
+                key={label}
+                href={href}
+                className={cn(
+                  "focus-ring flex h-10 w-full items-center gap-3 rounded-md px-3 text-sm text-sidebar-foreground/80 transition-colors hover:bg-muted/70 hover:text-sidebar-foreground",
+                  active && "nav-active text-sidebar-foreground",
+                )}
+              >
+                <Icon
+                  className={cn(
+                    "h-4 w-4 shrink-0",
+                    active ? "text-primary" : "text-muted-foreground",
+                  )}
+                />
+                <span data-link-label className="truncate font-medium">
+                  {label}
+                </span>
+              </Link>
+            );
+          })}
         </nav>
+
+        <div
+          data-link-label
+          className="absolute bottom-4 left-3 right-3 rounded-md border border-border/70 bg-muted/40 px-3 py-2.5"
+        >
+          <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+            System
+          </p>
+          <p className="mt-1 text-xs text-sidebar-foreground">
+            <span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-success" />
+            All pipelines synced
+          </p>
+        </div>
       </aside>
 
       <div data-main className="ml-[268px] min-h-screen transition-none">
@@ -133,12 +167,13 @@ export function AppShell({
       </div>
 
       {commandOpen ? (
-        <div className="fixed inset-0 z-30 flex items-start justify-center bg-black/40 pt-24">
-          <div className="w-[560px] rounded-lg border border-border bg-card p-4 shadow-xl">
-            <p className="text-sm text-muted-foreground">
-              Command palette placeholder (Cmd/Ctrl + K)
+        <div className="fixed inset-0 z-30 flex items-start justify-center bg-foreground/25 pt-24 backdrop-blur-sm">
+          <div className="w-[560px] rounded-lg border border-border bg-card/95 p-5 shadow-2xl backdrop-blur-xl">
+            <p className="page-eyebrow">Command</p>
+            <p className="mt-2 text-lg font-semibold tracking-tight">Jump anywhere</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Search modules, jump to records, trigger automations.
             </p>
-            <p className="mt-2 text-sm">Search modules, jump to records, trigger automations.</p>
             <div className="mt-4 text-right">
               <Button variant="outline" size="sm" onClick={() => setCommandOpen(false)}>
                 Close

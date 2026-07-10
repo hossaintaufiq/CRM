@@ -8,21 +8,30 @@ export default function NotificationsPage(): React.JSX.Element {
   const { notifications, markNotificationRead } = useCRMData();
 
   return (
-    <section className="space-y-4">
-      <h1 className="text-2xl font-semibold">Notifications</h1>
+    <section className="space-y-6">
+      <header className="space-y-2">
+        <p className="page-eyebrow">Inbox</p>
+        <h1 className="text-3xl font-semibold tracking-tight">Notifications</h1>
+        <p className="text-sm text-muted-foreground">
+          Realtime alerts from deals, leads, and automation runs.
+        </p>
+      </header>
       <Card>
         <CardHeader>
-          <CardTitle>Realtime Notification Hub</CardTitle>
+          <p className="page-eyebrow mb-2">Hub</p>
+          <CardTitle>Event feed</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {notifications.map((notification) => (
             <div
               key={notification.id}
-              className="flex items-center justify-between rounded-md border border-border p-4"
+              className="flex items-center justify-between gap-4 rounded-md border border-border/70 bg-muted/15 p-4"
             >
               <div>
-                <p className="font-medium">{notification.title}</p>
-                <p className="text-sm text-muted-foreground">{notification.description}</p>
+                <p className="font-medium tracking-tight">{notification.title}</p>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  {notification.description}
+                </p>
               </div>
               <Button
                 variant={notification.read ? "secondary" : "default"}
