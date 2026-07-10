@@ -1,148 +1,251 @@
-# Senior Full-Stack Developer Showcase (Dynamic CRM)
+# Nexus CRM
 
-Production-grade CRM frontend built with Next.js App Router, TypeScript strict mode, Tailwind CSS token theming, and GSAP micro-interactions.  
-This repository is designed to demonstrate senior-level frontend architecture, system thinking, and delivery quality for recruiter and hiring manager review.
+**Full-stack revenue operations console** — a multi-module CRM with a premium Next.js control plane and an Express/Node API. Built to demonstrate senior product engineering: typed domain models, modular UI architecture, JWT auth, REST CRUD, and a clear live / stub / external feature matrix.
 
----
+| Layer | Stack | Default URL |
+|---|---|---|
+| Frontend | Next.js 16 · React 19 · TypeScript · Tailwind CSS 4 · GSAP | http://localhost:3000 |
+| Backend | Node.js · Express 5 · JWT · JSON file store | http://127.0.0.1:8001 |
 
-## What Is Implemented
-
-This is no longer a single page scaffold. The system now includes complete route-based CRM modules with shared dynamic state:
-
-- `/dashboard` - executive metrics, pipeline chart, live activity stream
-- `/leads` - searchable/sortable lead grid, multi-select, status updates, animated detail drawer
-- `/deals` - enterprise kanban stages with GSAP FLIP reflow transitions
-- `/contacts` - account contact directory
-- `/analytics` - KPI trend monitor and computed operational metrics
-- `/automations` - workflow rules with live run counters
-- `/notifications` - realtime notification hub with read/unread state
-- `/settings` - organization configuration surface
+**Backend runtime is Node.js only.** An earlier FastAPI / Python prototype (`app-python-legacy`, `.venv`, `requirements.txt`, SQLite `nexus_crm.db`) was removed so the repo stays a clean Express + Next.js stack for demos and interviews.
 
 ---
 
-## Tech Stack
+## Why this project
 
-- **Framework:** Next.js 14+ style architecture via App Router
-- **Language:** TypeScript (strict)
-- **Styling:** Tailwind CSS + CSS variable design tokens
-- **UI Approach:** Reusable shadcn-style primitives (`card`, `button`, `badge`, `input`, `avatar`)
-- **Animation:** GSAP 3 (timeline transitions + FLIP)
-- **Icons:** Lucide React
+Hiring managers and recruiters can evaluate:
 
----
-
-## Dynamic Data System (Backend-Ready)
-
-The app now runs on a centralized dynamic state model (frontend-only demo mode) and is structured for backend replacement later:
-
-- **Demo data source:** `frontend/src/data/crm-demo-data.ts`
-- **Global shared state provider:** `frontend/src/hooks/use-crm-data.tsx`
-- **Typed domain models:** `frontend/src/types/crm.ts`
-
-Current dynamic behavior:
-
-- KPI trend arrays update over time
-- activity timestamps refresh
-- deal stage moves create new activity + notification events
-- automation run counters mutate over time
-- lead status updates propagate globally
-- notification read/unread state updates top nav badge in realtime
+- **Product surface area** — dashboard, leads, deals (kanban + list), contacts, analytics, automations, notifications, settings, feature catalog, login
+- **Frontend craft** — App Router, design tokens, reusable primitives, GSAP motion, readable premium UI
+- **Backend craft** — Express REST API, JWT + role guards, seeded demo data, feature registry
+- **System thinking** — API contract documented in the frontend, honest status labels for incomplete / third-party modules
 
 ---
 
-## Senior Engineering Signals
+## Quick start
 
-### 1) Architecture & Modularity
+### Prerequisites
 
-- Route groups and feature-based module organization
-- Explicit domain typing across CRM entities
-- Shared app shell + page-specific module composition
+- Node.js 20+ (recommended)
+- npm 10+
+- No Python / pip — backend is Express only
 
-### 2) UX + Motion Quality
+### 1) Backend
 
-- Sidebar collapse/expand synchronized with GSAP timeline
-- Dashboard staggered entrance sequence
-- FLIP-based kanban transitions for smooth re-layout
-- Drawer and overlay animations with cleanup-safe GSAP usage
-
-### 3) Reliability & Standards
-
-- Strict TypeScript with no `any`
-- Lint-safe and build-verified implementation
-- Reusable UI primitives reduce duplication and style drift
-
----
-
-## Project Structure
-
-```text
-.
-├── README.md
-└── frontend/
-    ├── src/
-    │   ├── app/
-    │   │   ├── (crm)/
-    │   │   │   ├── analytics/
-    │   │   │   ├── automations/
-    │   │   │   ├── contacts/
-    │   │   │   ├── dashboard/
-    │   │   │   ├── deals/
-    │   │   │   ├── leads/
-    │   │   │   ├── notifications/
-    │   │   │   └── settings/
-    │   ├── components/
-    │   │   ├── dashboard/
-    │   │   ├── kanban/
-    │   │   ├── layout/
-    │   │   ├── leads/
-    │   │   └── ui/
-    │   ├── data/
-    │   ├── hooks/
-    │   ├── lib/
-    │   └── types/
-    └── package.json
+```bash
+cd backend
+npm install
+copy .env.example .env   # Windows
+# cp .env.example .env   # macOS / Linux
+npm run dev
 ```
 
----
+- API: http://127.0.0.1:8001  
+- Health: http://127.0.0.1:8001/health  
 
-## Run Locally
-
-From the repository root:
+### 2) Frontend
 
 ```bash
 cd frontend
 npm install
+copy .env.local.example .env.local   # Windows
+# cp .env.local.example .env.local   # macOS / Linux
 npm run dev
 ```
 
-Quality checks:
+- App: http://localhost:3000  
+- Login redirects from `/`
+
+### Seed accounts
+
+| Email | Password | Role |
+|---|---|---|
+| `admin@nexus.crm` | `Admin123!` | Admin |
+| `sales@nexus.crm` | `Sales123!` | Sales |
+
+---
+
+## Architecture overview
+
+```text
+CRM/
+├── frontend/                 # Next.js App Router UI (Nexus Control Plane)
+│   └── src/
+│       ├── app/              # Routes: login + (crm) modules
+│       ├── components/       # Shell, deals, leads, charts, UI primitives
+│       ├── data/             # Demo seed + feature catalog
+│       ├── hooks/            # Shared CRM state provider
+│       ├── lib/api/          # Endpoint contract + client adapters
+│       └── types/            # Domain TypeScript models
+└── backend/                  # Express API
+    └── src/
+        ├── index.js          # Server bootstrap, CORS, health
+        ├── routes/api.js     # /api/v1 REST surface
+        ├── middleware/auth.js
+        ├── store/db.js       # JSON persistence
+        ├── seed.js           # Demo users + CRM records
+        └── data/features.js  # Enterprise feature registry
+```
+
+**Data flow (target):** UI → typed API contract (`endpoints.ts`) → Express `/api/v1/*` → JSON store.  
+**Demo mode:** frontend can run on in-memory demo state; set `NEXT_PUBLIC_USE_DEMO_API=false` to prefer the live API base URL.
+
+---
+
+## Frontend
+
+### Technologies
+
+| Area | Choice | Notes |
+|---|---|---|
+| Framework | **Next.js 16** (App Router) | Route groups, layouts, static generation |
+| UI library | **React 19** | Client components for interactive CRM surfaces |
+| Language | **TypeScript 5** | Strict domain types for leads, deals, contacts, etc. |
+| Styling | **Tailwind CSS 4** + CSS variables | Ink / stone / brass design tokens in `globals.css` |
+| Primitives | CVA + custom UI kit | Button, card, badge, input, avatar (shadcn-style) |
+| Motion | **GSAP 3** | Sidebar timeline, dashboard entrance, kanban FLIP |
+| Icons | **Lucide React** | Consistent iconography |
+| Fonts | Outfit + JetBrains Mono | Product UI + tabular / meta labels |
+
+### Modules (routes)
+
+| Route | Purpose |
+|---|---|
+| `/login` | Auth entry |
+| `/dashboard` | Executive KPIs, charts, activity |
+| `/leads` | Grid, filters, CRUD / bulk delete, detail drawer |
+| `/deals` | Board + list, stage moves, pipeline customize |
+| `/contacts` | Contact directory + CRUD |
+| `/analytics` | Operational KPI trends |
+| `/automations` | Workflow rules surface |
+| `/notifications` | Alerts + activity hub |
+| `/settings` | Workspace configuration |
+| `/features` | Full enterprise feature catalog (live / partial / stub / needs_external) |
+
+### Frontend quality signals
+
+- Feature-based folders under `components/` and route group `(crm)`
+- Shared shell (sidebar + top nav + command palette hook)
+- Central CRM state boundary (`use-crm-data`) for cross-module updates
+- Documented REST contract in `src/lib/api/endpoints.ts`
+- Premium visual system: high-contrast ink text, soft brass accents, readable 15px base type
+
+### Frontend scripts
 
 ```bash
-npm run lint
-npm run build
+cd frontend
+npm run dev      # development server
+npm run build    # production build
+npm run start    # serve production build
+npm run lint     # ESLint
 ```
 
 ---
 
-## Recruiter Snapshot
+## Backend
 
-For Senior Full-Stack Developer evaluation, this project demonstrates:
+### Technologies
 
-- scalable frontend system design (not just visual implementation)
-- strong TypeScript and modular component architecture
-- polished SaaS-grade interaction quality and animation discipline
-- backend-ready state layer separation (demo data now, API later)
-- ability to ship complete, multi-module product surfaces
+| Area | Choice | Notes |
+|---|---|---|
+| Runtime | **Node.js** (ES modules) | `"type": "module"` |
+| Framework | **Express 5** | REST under `/api/v1` |
+| Auth | **JWT** (`jsonwebtoken`) + **bcryptjs** | Login / register / `me`; role middleware |
+| Config | **dotenv** | Port, CORS, optional third-party keys |
+| CORS | **cors** | Allows local Next.js origins |
+| IDs | **uuid** | Entity identifiers |
+| Persistence | JSON file store (`src/data/db.json`) | Zero-ops local demo DB (swap-ready for Postgres later) |
+
+### API surface (selected)
+
+| Domain | Methods | Examples |
+|---|---|---|
+| Health | GET | `/health` |
+| Auth | POST / GET | `/api/v1/auth/login`, `/register`, `/me` |
+| Users / roles | GET / POST / PATCH / DELETE | Invites, status, Admin guards |
+| Dashboard | GET | `/api/v1/dashboard/summary` |
+| Deals | CRUD + stage + bulk delete | `/api/v1/deals`, `.../stage` |
+| Leads | CRUD + status + bulk | `/api/v1/leads` |
+| Contacts / companies | CRUD | `/api/v1/contacts`, `/companies` |
+| Tasks / activities | GET / POST | Feed + task list |
+| Notifications | GET / PATCH | Read / read-all |
+| Automations | GET / PATCH / DELETE | Rule status |
+| Pipeline | GET / PUT | Stages + board preferences |
+| Settings | GET / PUT | Workspace |
+| Features | GET | Catalog + summary for `/features` UI |
+
+OAuth, SSO, LDAP, OTP, Stripe, AI, and similar providers are **stubbed** and return clear “needs credentials” responses until env vars are set. See `backend/FEATURE_MATRIX.md`.
+
+### Backend scripts
+
+```bash
+cd backend
+npm run dev      # node --watch
+npm run start    # production-style start
+npm run seed     # re-seed demo data
+```
 
 ---
 
-## Next Step (Backend Integration)
+## Feature maturity model
 
-When you are ready to add backend:
+Statuses are intentional and visible in the product (`/features`) and API:
 
-- replace `crm-demo-data.ts` with API fetch layer
-- preserve `use-crm-data` contract as app-facing state boundary
-- add optimistic updates + error handling around mutations
-- wire auth/roles for route/module permissions
-- add integration and e2e tests for critical CRM flows
+| Status | Meaning |
+|---|---|
+| **live** | Implemented and runnable end-to-end for the demo |
+| **partial** | Basic path exists; not full enterprise depth |
+| **stub** | Scaffold / contract only |
+| **needs_external** | Requires third-party credentials (OAuth, Twilio, Stripe, OpenAI, etc.) |
 
+This keeps the portfolio honest: core CRM is real; enterprise breadth is catalogued and extensible.
+
+---
+
+## Environment variables
+
+### Backend (`backend/.env`)
+
+```env
+SECRET_KEY=dev-secret-change-me-in-production
+PORT=8001
+CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+```
+
+Optional keys (OAuth, SMTP, Twilio, Stripe, OpenAI, LDAP, SSO) are listed in `backend/.env.example`.
+
+### Frontend (`frontend/.env.local`)
+
+```env
+NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8001
+NEXT_PUBLIC_USE_DEMO_API=false
+```
+
+---
+
+## Recruiter snapshot
+
+| Signal | Evidence in this repo |
+|---|---|
+| Full-stack ownership | Next.js UI + Express API in one monorepo |
+| Modern frontend | Next 16, React 19, Tailwind 4, TypeScript |
+| API design | Versioned `/api/v1`, JWT, role-aware routes |
+| Product UX | Multi-module CRM with premium motion and typography |
+| Engineering honesty | Feature matrix with live vs stub vs external |
+| Runnability | Seed users, health check, documented local setup |
+
+---
+
+## Roadmap (natural next steps)
+
+- Wire all frontend mutations through the live Express client (replace remaining demo adapters)
+- Swap JSON store for PostgreSQL / Prisma (or similar)
+- Add integration tests for auth + deals/leads CRUD
+- Complete high-priority stubs (email, calendar, billing) behind real credentials
+- Deploy frontend (Vercel) + backend (Railway / Render / Fly) with production secrets
+
+---
+
+## License
+
+Private portfolio / interview project unless otherwise noted.
