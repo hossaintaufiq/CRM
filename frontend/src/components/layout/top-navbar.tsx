@@ -9,11 +9,13 @@ import { Avatar } from "@/components/ui/avatar";
 interface TopNavbarProps {
   onCommandPaletteOpen: () => void;
   unreadNotifications: number;
+  organizationName: string;
 }
 
 export function TopNavbar({
   onCommandPaletteOpen,
   unreadNotifications,
+  organizationName,
 }: TopNavbarProps): React.JSX.Element {
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-border/70 bg-background/75 px-6 backdrop-blur-xl">
@@ -49,7 +51,7 @@ export function TopNavbar({
             </p>
             <Input
               className="h-5 w-[150px] border-0 bg-transparent p-0 text-sm font-medium focus-visible:ring-0"
-              value="Northstar Ventures"
+              value={organizationName}
               readOnly
               aria-label="Organization switcher"
             />

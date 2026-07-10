@@ -2,12 +2,14 @@
 
 import { useMemo, useState, useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
-import { Mail, NotebookPen, Phone } from "lucide-react";
+import { Mail, NotebookPen, Phone, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import type { Lead, LeadStatus } from "@/types/crm";
+import { LeadFormModal } from "@/components/leads/lead-form-modal";
+import type { Lead, LeadInput, LeadStatus } from "@/types/crm";
 import { cn } from "@/lib/utils";
+import { API_ENDPOINTS } from "@/lib/api/endpoints";
 
 interface LeadManagementGridProps {
   leads: Lead[];
@@ -15,6 +17,9 @@ interface LeadManagementGridProps {
   onSelectLead: (leadId: string) => void;
   onCloseDetail: () => void;
   onUpdateLeadStatus: (leadId: string, status: LeadStatus) => void;
+  onCreateLead: (input: LeadInput) => void;
+  onDeleteLead: (leadId: string) => void;
+  onDeleteLeads: (leadIds: string[]) => void;
 }
 
 function scoreTone(score: number): "success" | "warning" | "destructive" {
@@ -29,11 +34,15 @@ export function LeadManagementGrid({
   onSelectLead,
   onCloseDetail,
   onUpdateLeadStatus,
+  onCreateLead,
+  onDeleteLead,
+  onDeleteLeads,
 }: LeadManagementGridProps): React.JSX.Element {
   const drawerRef = useRef<HTMLElement>(null);
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState<"score" | "name" | "lastTouch">("score");
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [createOpen, setCreateOpen] = useState(false);
 
   const sortedLeads = useMemo(() => {
     const filtered = leads.filter(
@@ -98,9 +107,12 @@ export function LeadManagementGrid({
         <div className="space-y-2">
           <p className="page-eyebrow">Inbound engine</p>
           <h1 className="text-3xl font-semibold tracking-tight">Lead management</h1>
-          <p className="text-sm text-muted-foreground">
-            Score, qualify, and action high-intent accounts from one grid.
-          </p>
+        <p className="text-sm text-muted-foreground">
+          Score, qualify, delete, and action high-intent accounts. Demo data ·{" "}
+          <span className="font-mono text-[11px] text-foreground">
+            GET/POST {API_ENDPOINTS.leads}
+          </span>
+        </p>
         </div>
         <div className="flex gap-2">
           <div className="rounded-md border border-border/80 bg-card/80 px-3 py-2">
@@ -115,6 +127,10 @@ export function LeadManagementGrid({
             </p>
             <p className="font-mono text-sm font-semibold tabular-nums">{avgScore}</p>
           </div>
+          <Button onClick={() => setCreateOpen(true)}>
+            <Plus className="mr-1.5 h-4 w-4" />
+            Add lead
+          </Button>
         </div>
       </header>
 
@@ -140,6 +156,22 @@ export function LeadManagementGrid({
           <p className="ml-auto font-mono text-[11px] text-muted-foreground">
             {selectedRows.length} selected · {sortedLeads.length} shown
           </p>
+          {selectedRows.length > 0 ? (
+            <Button
+              size="sm"
+              variant="outline"
+              className="text-destructive"
+              onClick={() => {
+                if (window.confirm(`Delete ${selectedRows.length} leads?`)) {
+                  onDeleteLeads(selectedRows);
+                  setSelectedRows([]);
+                }
+              }}
+            >
+              <Trash2 className="mr-1.5 h-3.5 w-3.5" />
+              Delete selected
+            </Button>
+          ) : null}
         </div>
 
         <div className="overflow-hidden rounded-md border border-border/80">
@@ -151,9 +183,9 @@ export function LeadManagementGrid({
                 <th className="px-4 py-3">Status</th>
                 <th className="px-4 py-3">Score</th>
                 <th className="px-4 py-3">Last Touch</th>
-                <th className="px-4 py-3">Actions</th>
-              </tr>
-            </thead>
+              <th className="px-4 py-3">Actions</th>
+                </tr>
+              </thead>
             <tbody>
               {sortedLeads.map((lead) => (
                 <tr
@@ -233,6 +265,18 @@ export function LeadManagementGrid({
                       <Button size="icon" variant="ghost" aria-label="Log note">
                         <NotebookPen className="h-4 w-4" />
                       </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        aria-label="Delete lead"
+                        onClick={() => {
+                          if (window.confirm(`Delete lead “${lead.name}”?`)) {
+                            onDeleteLead(lead.id);
+                          }
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
                     </div>
                   </td>
                 </tr>
@@ -255,6 +299,9 @@ export function LeadManagementGrid({
               className="absolute right-0 top-0 z-20 h-full w-[400px] border-l border-border bg-card/98 p-5 shadow-2xl backdrop-blur-xl"
             >
               <p className="page-eyebrow">Lead dossier</p>
+              <p className="mt-1 font-mono text-[10px] text-muted-foreground">
+                DELETE {API_ENDPOINTS.leadById(selectedLead.id)}
+              </p>
               <div className="mt-2 flex items-start justify-between gap-3">
                 <div>
                   <h3 className="text-lg font-semibold tracking-tight">{selectedLead.name}</h3>
@@ -294,10 +341,31 @@ export function LeadManagementGrid({
                   </div>
                 ))}
               </div>
+              <div className="mt-6">
+                <Button
+                  variant="outline"
+                  className="w-full text-destructive"
+                  onClick={() => {
+                    if (window.confirm(`Delete lead “${selectedLead.name}”?`)) {
+                      onDeleteLead(selectedLead.id);
+                      onCloseDetail();
+                    }
+                  }}
+                >
+                  <Trash2 className="mr-1.5 h-4 w-4" />
+                  Delete lead
+                </Button>
+              </div>
             </aside>
           </>
         ) : null}
       </div>
+
+      <LeadFormModal
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onSubmit={onCreateLead}
+      />
     </section>
   );
 }

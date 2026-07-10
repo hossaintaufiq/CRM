@@ -22,6 +22,7 @@ import { TopNavbar } from "@/components/layout/top-navbar";
 interface AppShellProps {
   children: React.ReactNode;
   unreadNotifications: number;
+  organizationName: string;
 }
 
 const navItems = [
@@ -37,6 +38,7 @@ const navItems = [
 export function AppShell({
   children,
   unreadNotifications,
+  organizationName,
 }: AppShellProps): React.JSX.Element {
   const [collapsed, setCollapsed] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
@@ -162,6 +164,7 @@ export function AppShell({
         <TopNavbar
           onCommandPaletteOpen={() => setCommandOpen(true)}
           unreadNotifications={unreadNotifications}
+          organizationName={organizationName}
         />
         <main className="p-6">{children}</main>
       </div>

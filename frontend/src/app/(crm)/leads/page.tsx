@@ -10,6 +10,9 @@ export default function LeadsPage(): React.JSX.Element {
     selectLead,
     clearLeadSelection,
     updateLeadStatus,
+    createLead,
+    deleteLead,
+    deleteLeads,
   } = useCRMData();
   return (
     <LeadManagementGrid
@@ -18,6 +21,9 @@ export default function LeadsPage(): React.JSX.Element {
       onSelectLead={selectLead}
       onCloseDetail={clearLeadSelection}
       onUpdateLeadStatus={updateLeadStatus}
+      onCreateLead={createLead}
+      onDeleteLead={deleteLead}
+      onDeleteLeads={deleteLeads}
     />
   );
 }
