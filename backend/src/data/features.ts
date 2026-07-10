@@ -1,6 +1,8 @@
 /** Enterprise feature registry — source of truth for frontend catalog. */
 
-export const FEATURES = [
+import type { Feature, FeatureStatus } from "../types.js";
+
+export const FEATURES: Feature[] = [
   { id: "auth.email_password", name: "Email & Password", category: "Authentication", status: "live", notes: "JWT login/register working", requires: [] },
   { id: "auth.google", name: "Google Login", category: "Authentication", status: "needs_external", notes: "Stub endpoint", requires: ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"] },
   { id: "auth.microsoft", name: "Microsoft Login", category: "Authentication", status: "needs_external", notes: "Stub endpoint", requires: ["MICROSOFT_CLIENT_ID", "MICROSOFT_CLIENT_SECRET"] },
@@ -102,7 +104,7 @@ export const FEATURES = [
   { id: "notifications", name: "In-App Notifications + Activity", category: "Notifications", status: "live", notes: "Alerts + activity hub", requires: [] },
   { id: "notifications.external", name: "Email/SMS/Push/Slack/Teams Notify", category: "Notifications", status: "needs_external", notes: "Needs providers", requires: ["SMTP_HOST", "TWILIO_ACCOUNT_SID"] },
   { id: "integrations", name: "Integrations Hub", category: "Integrations", status: "needs_external", notes: "Catalog stub", requires: [] },
-  { id: "api.rest", name: "REST API", category: "API", status: "live", notes: "Express REST", requires: [] },
+  { id: "api.rest", name: "REST API", category: "API", status: "live", notes: "TypeScript Express REST", requires: [] },
   { id: "api.graphql", name: "GraphQL", category: "API", status: "stub", notes: "Not implemented", requires: [] },
   { id: "api.webhooks", name: "Webhooks", category: "API", status: "stub", notes: "Module stub", requires: [] },
   { id: "import_export", name: "Import & Export", category: "Import & Export", status: "stub", notes: "Module stub", requires: [] },
@@ -131,8 +133,8 @@ export const FEATURES = [
   { id: "enterprise", name: "Advanced Enterprise Features", category: "Advanced Enterprise Features", status: "stub", notes: "Catalog only", requires: [] },
 ];
 
-export function featuresByStatus() {
-  return FEATURES.reduce(
+export function featuresByStatus(): Record<FeatureStatus, Feature[]> {
+  return FEATURES.reduce<Record<FeatureStatus, Feature[]>>(
     (acc, feature) => {
       acc[feature.status] = acc[feature.status] || [];
       acc[feature.status].push(feature);
@@ -143,10 +145,10 @@ export function featuresByStatus() {
 }
 
 export function featuresByCategory() {
-  const map = new Map();
+  const map = new Map<string, Feature[]>();
   for (const feature of FEATURES) {
     if (!map.has(feature.category)) map.set(feature.category, []);
-    map.get(feature.category).push(feature);
+    map.get(feature.category)!.push(feature);
   }
   return Array.from(map.entries()).map(([category, items]) => ({
     category,
@@ -159,3 +161,4 @@ export function featuresByCategory() {
     },
   }));
 }
+

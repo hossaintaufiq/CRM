@@ -1,14 +1,17 @@
 import bcrypt from "bcryptjs";
 import { v4 as uuid } from "uuid";
+import path from "path";
+import { fileURLToPath } from "url";
 import { readDb, writeDb } from "./store/db.js";
+import type { Database } from "./types.js";
 
-function daysFromNow(days) {
+function daysFromNow(days: number): string {
   const d = new Date();
   d.setDate(d.getDate() + days);
   return d.toISOString().slice(0, 10);
 }
 
-export function seedIfEmpty() {
+export function seedIfEmpty(): Database {
   const db = readDb();
   if (db.users.length > 0) return db;
 
@@ -270,7 +273,7 @@ export function seedIfEmpty() {
     {
       id: uuid(),
       title: "Welcome to Nexus",
-      description: "Express backend is live with demo seed data.",
+      description: "TypeScript Express backend is live with demo seed data.",
       read: false,
       userId: adminId,
       timestamp: Date.now(),
@@ -281,7 +284,11 @@ export function seedIfEmpty() {
   return db;
 }
 
-if (process.argv[1] && process.argv[1].endsWith("seed.js")) {
+const isDirectRun =
+  process.argv[1] !== undefined &&
+  path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url));
+
+if (isDirectRun) {
   seedIfEmpty();
   console.log("Seed complete");
 }

@@ -1,14 +1,15 @@
-import { Router } from "express";
+import { Router, type Request, type Response } from "express";
 import bcrypt from "bcryptjs";
 import { v4 as uuid } from "uuid";
 import { config } from "../config.js";
 import { featuresByCategory, featuresByStatus, FEATURES } from "../data/features.js";
-import { publicUser, requireAuth, requireRoles, signToken } from "../middleware/auth.js";
+import { getUser, publicUser, requireAuth, requireRoles, signToken } from "../middleware/auth.js";
+import type { Contact, Database, Deal, Lead, User } from "../types.js";
 import { readDb, updateDb, writeDb } from "../store/db.js";
 
 const router = Router();
 
-function pushActivity(db, actor, action, target) {
+function pushActivity(db: Database, actor: string, action: string, target: string): void {
   db.activities.unshift({
     id: uuid(),
     actor,
@@ -19,7 +20,7 @@ function pushActivity(db, actor, action, target) {
   db.activities = db.activities.slice(0, 50);
 }
 
-function ago(ts) {
+function ago(ts: number): string {
   const minutes = Math.max(1, Math.floor((Date.now() - ts) / 60000));
   if (minutes < 60) return `${minutes}m ago`;
   const hours = Math.floor(minutes / 60);
@@ -27,7 +28,7 @@ function ago(ts) {
   return `${Math.floor(hours / 24)}d ago`;
 }
 
-function initials(name = "") {
+function initials(name = ""): string {
   return name
     .split(" ")
     .map((p) => p[0] || "")
@@ -36,7 +37,7 @@ function initials(name = "") {
     .toUpperCase();
 }
 
-function dealOut(deal) {
+function dealOut(deal: Deal) {
   return {
     id: deal.id,
     title: deal.title,
@@ -58,7 +59,7 @@ function dealOut(deal) {
   };
 }
 
-function leadOut(lead) {
+function leadOut(lead: Lead) {
   return {
     id: lead.id,
     name: lead.name,
@@ -74,7 +75,7 @@ function leadOut(lead) {
 }
 
 // ── Auth ──────────────────────────────────────────────────────────
-router.post("/auth/register", (req, res) => {
+router.post("/auth/register", (req: Request, res: Response) => {
   const { email, password, full_name: fullName, role = "Sales" } = req.body || {};
   if (!email || !password || !fullName) {
     return res.status(400).json({ detail: "Missing fields" });
@@ -83,7 +84,7 @@ router.post("/auth/register", (req, res) => {
   if (db.users.some((u) => u.email === String(email).toLowerCase())) {
     return res.status(400).json({ detail: "Email already registered" });
   }
-  const user = {
+  const user: User = {
     id: uuid(),
     email: String(email).toLowerCase(),
     fullName,
@@ -102,7 +103,7 @@ router.post("/auth/register", (req, res) => {
   return res.json({ access_token: signToken(user), token_type: "bearer", user: publicUser(user) });
 });
 
-router.post("/auth/login", (req, res) => {
+router.post("/auth/login", (req: Request, res: Response) => {
   const { email, password } = req.body || {};
   const db = readDb();
   const user = db.users.find((u) => u.email === String(email || "").toLowerCase());
@@ -113,9 +114,9 @@ router.post("/auth/login", (req, res) => {
   return res.json({ access_token: signToken(user), token_type: "bearer", user: publicUser(user) });
 });
 
-router.get("/auth/me", requireAuth, (req, res) => res.json(publicUser(req.user)));
+router.get("/auth/me", requireAuth, (req: Request, res: Response) => res.json(publicUser(getUser(req))));
 
-router.post("/auth/password-reset/request", (req, res) => {
+router.post("/auth/password-reset/request", (_req: Request, res: Response) => {
   res.json({
     status: "accepted",
     message: "If SMTP is configured, a reset email would be sent.",
@@ -124,24 +125,25 @@ router.post("/auth/password-reset/request", (req, res) => {
   });
 });
 
-router.post("/auth/oauth/:provider/start", (req, res) => {
+router.post("/auth/oauth/:provider/start", (req: Request, res: Response) => {
   const provider = String(req.params.provider || "").toLowerCase();
-  const map = {
+  const map: Record<string, string> = {
     google: config.googleClientId,
     microsoft: config.microsoftClientId,
     apple: config.appleClientId,
     github: config.githubClientId,
   };
   if (!(provider in map)) return res.status(404).json({ detail: "Unknown provider" });
+  const clientId = map[provider];
   res.json({
-    status: map[provider] ? "ready" : "needs_external",
+    status: clientId ? "ready" : "needs_external",
     provider,
-    configured: Boolean(map[provider]),
+    configured: Boolean(clientId),
     message: `${provider} OAuth is scaffolded. Configure secrets to enable.`,
   });
 });
 
-router.post("/auth/magic-link", (req, res) => {
+router.post("/auth/magic-link", (_req: Request, res: Response) => {
   res.json({
     status: "needs_external",
     requires: ["SMTP_HOST", "SMTP_USER", "SMTP_PASSWORD"],
@@ -149,7 +151,7 @@ router.post("/auth/magic-link", (req, res) => {
   });
 });
 
-router.post("/auth/otp/send", (req, res) => {
+router.post("/auth/otp/send", (_req: Request, res: Response) => {
   res.json({
     status: "needs_external",
     requires: ["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN"],
@@ -157,7 +159,7 @@ router.post("/auth/otp/send", (req, res) => {
   });
 });
 
-router.post("/auth/sso/start", (_req, res) => {
+router.post("/auth/sso/start", (_req: Request, res: Response) => {
   res.json({
     status: "needs_external",
     requires: ["SSO_METADATA_URL"],
@@ -165,7 +167,7 @@ router.post("/auth/sso/start", (_req, res) => {
   });
 });
 
-router.post("/auth/ldap/login", (_req, res) => {
+router.post("/auth/ldap/login", (_req: Request, res: Response) => {
   res.json({
     status: "needs_external",
     requires: ["LDAP_SERVER"],
@@ -174,18 +176,18 @@ router.post("/auth/ldap/login", (_req, res) => {
 });
 
 // ── Users / Roles / Orgs ──────────────────────────────────────────
-router.get("/users", requireAuth, (_req, res) => {
+router.get("/users", requireAuth, (_req: Request, res: Response) => {
   const db = readDb();
   res.json(db.users.map(publicUser));
 });
 
-router.post("/users/invite", requireAuth, requireRoles("Admin", "Manager"), (req, res) => {
+router.post("/users/invite", requireAuth, requireRoles("Admin", "Manager"), (req: Request, res: Response) => {
   const { email, full_name: fullName, role = "Sales", department = "Sales", team = "GTM" } = req.body || {};
   const db = readDb();
   if (db.users.some((u) => u.email === String(email).toLowerCase())) {
     return res.status(400).json({ detail: "User exists" });
   }
-  const user = {
+  const user: User = {
     id: uuid(),
     email: String(email).toLowerCase(),
     fullName,
@@ -204,7 +206,7 @@ router.post("/users/invite", requireAuth, requireRoles("Admin", "Manager"), (req
   res.json(publicUser(user));
 });
 
-router.patch("/users/:id/status", requireAuth, requireRoles("Admin"), (req, res) => {
+router.patch("/users/:id/status", requireAuth, requireRoles("Admin"), (req: Request, res: Response) => {
   const db = readDb();
   const user = db.users.find((u) => u.id === req.params.id);
   if (!user) return res.status(404).json({ detail: "User not found" });
@@ -213,14 +215,14 @@ router.patch("/users/:id/status", requireAuth, requireRoles("Admin"), (req, res)
   res.json(publicUser(user));
 });
 
-router.delete("/users/:id", requireAuth, requireRoles("Admin"), (req, res) => {
+router.delete("/users/:id", requireAuth, requireRoles("Admin"), (req: Request, res: Response) => {
   updateDb((db) => {
     db.users = db.users.filter((u) => u.id !== req.params.id);
   });
   res.json({ ok: true });
 });
 
-router.get("/roles", requireAuth, (_req, res) => {
+router.get("/roles", requireAuth, (_req: Request, res: Response) => {
   res.json({
     builtin: [
       { id: "Admin", permissions: ["*"] },
@@ -238,7 +240,7 @@ router.get("/roles", requireAuth, (_req, res) => {
   });
 });
 
-router.get("/organizations", requireAuth, (_req, res) => {
+router.get("/organizations", requireAuth, (_req: Request, res: Response) => {
   const db = readDb();
   res.json(
     db.organizations.map((o) => ({
@@ -251,7 +253,7 @@ router.get("/organizations", requireAuth, (_req, res) => {
 });
 
 // ── Dashboard ─────────────────────────────────────────────────────
-router.get("/dashboard/summary", requireAuth, (_req, res) => {
+router.get("/dashboard/summary", requireAuth, (_req: Request, res: Response) => {
   const db = readDb();
   const openDeals = db.deals.filter((d) => !["Closed Won", "Closed Lost"].includes(d.stage));
   const won = db.deals.filter((d) => d.stage === "Closed Won");
@@ -311,15 +313,15 @@ router.get("/dashboard/summary", requireAuth, (_req, res) => {
 });
 
 // ── Deals ─────────────────────────────────────────────────────────
-router.get("/deals", requireAuth, (_req, res) => {
+router.get("/deals", requireAuth, (_req: Request, res: Response) => {
   const db = readDb();
   res.json([...db.deals].sort((a, b) => b.value - a.value).map(dealOut));
 });
 
-router.post("/deals", requireAuth, (req, res) => {
+router.post("/deals", requireAuth, (req: Request, res: Response) => {
   const body = req.body || {};
   const now = new Date().toISOString();
-  const deal = {
+  const deal: Deal = {
     id: uuid(),
     title: body.title,
     companyName: body.companyName,
@@ -339,14 +341,14 @@ router.post("/deals", requireAuth, (req, res) => {
   };
   updateDb((db) => {
     db.deals.unshift(deal);
-    pushActivity(db, req.user.fullName, "created deal", deal.companyName);
+    pushActivity(db, getUser(req).fullName, "created deal", deal.companyName);
   });
   res.json(dealOut(deal));
 });
 
-router.patch("/deals/:id", requireAuth, (req, res) => {
+router.patch("/deals/:id", requireAuth, (req: Request, res: Response) => {
   const body = req.body || {};
-  let updated = null;
+  let updated: Deal | null = null;
   updateDb((db) => {
     const deal = db.deals.find((d) => d.id === req.params.id);
     if (!deal) return;
@@ -372,7 +374,7 @@ router.patch("/deals/:id", requireAuth, (req, res) => {
   res.json(dealOut(updated));
 });
 
-router.patch("/deals/:id/stage", requireAuth, (req, res) => {
+router.patch("/deals/:id/stage", requireAuth, (req: Request, res: Response) => {
   const stage = req.body?.stage;
   let updated = null;
   updateDb((db) => {
@@ -382,13 +384,13 @@ router.patch("/deals/:id/stage", requireAuth, (req, res) => {
     if (stage === "Closed Won") deal.probability = 100;
     if (stage === "Closed Lost") deal.probability = 0;
     deal.updatedAt = new Date().toISOString();
-    pushActivity(db, req.user.fullName, "moved deal to", `${deal.companyName} (${stage})`);
+    pushActivity(db, getUser(req).fullName, "moved deal to", `${deal.companyName} (${stage})`);
     db.notifications.unshift({
       id: uuid(),
       title: "Deal stage changed",
       description: `${deal.companyName} moved to ${stage}.`,
       read: false,
-      userId: req.user.id,
+      userId: getUser(req).id,
       timestamp: Date.now(),
     });
     updated = deal;
@@ -397,16 +399,16 @@ router.patch("/deals/:id/stage", requireAuth, (req, res) => {
   res.json(dealOut(updated));
 });
 
-router.delete("/deals/:id", requireAuth, (req, res) => {
+router.delete("/deals/:id", requireAuth, (req: Request, res: Response) => {
   updateDb((db) => {
     const deal = db.deals.find((d) => d.id === req.params.id);
-    if (deal) pushActivity(db, req.user.fullName, "deleted deal", deal.companyName);
+    if (deal) pushActivity(db, getUser(req).fullName, "deleted deal", deal.companyName);
     db.deals = db.deals.filter((d) => d.id !== req.params.id);
   });
   res.json({ ok: true });
 });
 
-router.post("/deals/bulk-delete", requireAuth, (req, res) => {
+router.post("/deals/bulk-delete", requireAuth, (req: Request, res: Response) => {
   const ids = new Set(req.body?.ids || []);
   updateDb((db) => {
     db.deals = db.deals.filter((d) => !ids.has(d.id));
@@ -415,14 +417,14 @@ router.post("/deals/bulk-delete", requireAuth, (req, res) => {
 });
 
 // ── Leads ─────────────────────────────────────────────────────────
-router.get("/leads", requireAuth, (_req, res) => {
+router.get("/leads", requireAuth, (_req: Request, res: Response) => {
   const db = readDb();
   res.json([...db.leads].sort((a, b) => b.score - a.score).map(leadOut));
 });
 
-router.post("/leads", requireAuth, (req, res) => {
+router.post("/leads", requireAuth, (req: Request, res: Response) => {
   const body = req.body || {};
-  const lead = {
+  const lead: Lead = {
     id: uuid(),
     name: body.name,
     company: body.company,
@@ -431,86 +433,86 @@ router.post("/leads", requireAuth, (req, res) => {
     source: body.source || "Inbound",
     status: body.status || "New",
     score: Number(body.score) || 50,
-    ownerId: req.user.id,
+    ownerId: getUser(req).id,
     timeline: body.timeline || ["Lead created"],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
   updateDb((db) => {
     db.leads.unshift(lead);
-    pushActivity(db, req.user.fullName, "created lead", lead.name);
+    pushActivity(db, getUser(req).fullName, "created lead", lead.name);
   });
   res.json(leadOut(lead));
 });
 
-router.patch("/leads/:id/status", requireAuth, (req, res) => {
-  let updated = null;
+router.patch("/leads/:id/status", requireAuth, (req: Request, res: Response) => {
+  let updated: Lead | null = null;
   updateDb((db) => {
     const lead = db.leads.find((l) => l.id === req.params.id);
     if (!lead) return;
     lead.status = req.body?.status || req.query.status || lead.status;
-    pushActivity(db, req.user.fullName, "updated lead status", `${lead.name} → ${lead.status}`);
+    pushActivity(db, getUser(req).fullName, "updated lead status", `${lead.name} → ${lead.status}`);
     updated = lead;
   });
   if (!updated) return res.status(404).json({ detail: "Lead not found" });
   res.json(leadOut(updated));
 });
 
-router.delete("/leads/:id", requireAuth, (req, res) => {
+router.delete("/leads/:id", requireAuth, (req: Request, res: Response) => {
   updateDb((db) => {
     const lead = db.leads.find((l) => l.id === req.params.id);
-    if (lead) pushActivity(db, req.user.fullName, "deleted lead", lead.name);
+    if (lead) pushActivity(db, getUser(req).fullName, "deleted lead", lead.name);
     db.leads = db.leads.filter((l) => l.id !== req.params.id);
   });
   res.json({ ok: true });
 });
 
-router.post("/leads/bulk-delete", requireAuth, (req, res) => {
+router.post("/leads/bulk-delete", requireAuth, (req: Request, res: Response) => {
   const ids = new Set(req.body?.ids || []);
   updateDb((db) => {
     db.leads = db.leads.filter((l) => !ids.has(l.id));
-    pushActivity(db, req.user.fullName, "bulk deleted", `${ids.size} leads`);
+    pushActivity(db, getUser(req).fullName, "bulk deleted", `${ids.size} leads`);
   });
   res.json({ ok: true, deleted: ids.size });
 });
 
-router.post("/leads/import", requireAuth, (_req, res) => {
+router.post("/leads/import", requireAuth, (_req: Request, res: Response) => {
   res.json({ status: "stub", message: "CSV/Excel import planned" });
 });
 
-router.get("/leads/export", requireAuth, (_req, res) => {
+router.get("/leads/export", requireAuth, (_req: Request, res: Response) => {
   res.json({ status: "stub", message: "CSV/Excel export planned" });
 });
 
 // ── Contacts / Companies / Tasks ──────────────────────────────────
-router.get("/contacts", requireAuth, (_req, res) => res.json(readDb().contacts));
-router.post("/contacts", requireAuth, (req, res) => {
+router.get("/contacts", requireAuth, (_req: Request, res: Response) => res.json(readDb().contacts));
+router.post("/contacts", requireAuth, (req: Request, res: Response) => {
   const body = req.body || {};
-  const contact = {
+  const contact: Contact = {
     id: uuid(),
     name: body.name,
     company: body.company,
     role: body.role || "",
     email: body.email,
     phone: body.phone || "",
-    owner: body.owner || req.user.fullName,
+    owner: body.owner || getUser(req).fullName,
     createdAt: new Date().toISOString(),
   };
   updateDb((db) => {
     db.contacts.unshift(contact);
-    pushActivity(db, req.user.fullName, "created contact", contact.name);
+    pushActivity(db, getUser(req).fullName, "created contact", contact.name);
   });
   res.json(contact);
 });
-router.delete("/contacts/:id", requireAuth, (req, res) => {
+router.delete("/contacts/:id", requireAuth, (req: Request, res: Response) => {
   updateDb((db) => {
     const contact = db.contacts.find((c) => c.id === req.params.id);
-    if (contact) pushActivity(db, req.user.fullName, "deleted contact", contact.name);
+    if (contact) pushActivity(db, getUser(req).fullName, "deleted contact", contact.name);
     db.contacts = db.contacts.filter((c) => c.id !== req.params.id);
   });
   res.json({ ok: true });
 });
-router.post("/contacts/bulk-delete", requireAuth, (req, res) => {
+router.post("/contacts/bulk-delete", requireAuth, (req: Request, res: Response) => {
   const ids = new Set(req.body?.ids || []);
   updateDb((db) => {
     db.contacts = db.contacts.filter((c) => !ids.has(c.id));
@@ -518,8 +520,8 @@ router.post("/contacts/bulk-delete", requireAuth, (req, res) => {
   res.json({ ok: true, deleted: ids.size });
 });
 
-router.get("/companies", requireAuth, (_req, res) => res.json(readDb().companies));
-router.post("/companies", requireAuth, (req, res) => {
+router.get("/companies", requireAuth, (_req: Request, res: Response) => res.json(readDb().companies));
+router.post("/companies", requireAuth, (req: Request, res: Response) => {
   const body = req.body || {};
   const company = {
     id: uuid(),
@@ -534,15 +536,15 @@ router.post("/companies", requireAuth, (req, res) => {
   updateDb((db) => db.companies.unshift(company));
   res.json(company);
 });
-router.delete("/companies/:id", requireAuth, (req, res) => {
+router.delete("/companies/:id", requireAuth, (req: Request, res: Response) => {
   updateDb((db) => {
     db.companies = db.companies.filter((c) => c.id !== req.params.id);
   });
   res.json({ ok: true });
 });
 
-router.get("/tasks", requireAuth, (_req, res) => res.json(readDb().tasks));
-router.post("/tasks", requireAuth, (req, res) => {
+router.get("/tasks", requireAuth, (_req: Request, res: Response) => res.json(readDb().tasks));
+router.post("/tasks", requireAuth, (req: Request, res: Response) => {
   const body = req.body || {};
   const task = {
     id: uuid(),
@@ -557,7 +559,7 @@ router.post("/tasks", requireAuth, (req, res) => {
   updateDb((db) => db.tasks.unshift(task));
   res.json(task);
 });
-router.delete("/tasks/:id", requireAuth, (req, res) => {
+router.delete("/tasks/:id", requireAuth, (req: Request, res: Response) => {
   updateDb((db) => {
     db.tasks = db.tasks.filter((t) => t.id !== req.params.id);
   });
@@ -565,7 +567,7 @@ router.delete("/tasks/:id", requireAuth, (req, res) => {
 });
 
 // ── Activities / Notifications / Automations ──────────────────────
-router.get("/activities", requireAuth, (_req, res) => {
+router.get("/activities", requireAuth, (_req: Request, res: Response) => {
   const db = readDb();
   res.json(
     db.activities.slice(0, 50).map((a) => ({
@@ -579,7 +581,7 @@ router.get("/activities", requireAuth, (_req, res) => {
   );
 });
 
-router.get("/notifications", requireAuth, (_req, res) => {
+router.get("/notifications", requireAuth, (_req: Request, res: Response) => {
   res.json(
     readDb().notifications.slice(0, 50).map((n) => ({
       id: n.id,
@@ -591,7 +593,7 @@ router.get("/notifications", requireAuth, (_req, res) => {
   );
 });
 
-router.patch("/notifications/:id/read", requireAuth, (req, res) => {
+router.patch("/notifications/:id/read", requireAuth, (req: Request, res: Response) => {
   updateDb((db) => {
     const row = db.notifications.find((n) => n.id === req.params.id);
     if (row) row.read = true;
@@ -599,7 +601,7 @@ router.patch("/notifications/:id/read", requireAuth, (req, res) => {
   res.json({ ok: true });
 });
 
-router.post("/notifications/read-all", requireAuth, (_req, res) => {
+router.post("/notifications/read-all", requireAuth, (_req: Request, res: Response) => {
   updateDb((db) => {
     db.notifications.forEach((n) => {
       n.read = true;
@@ -608,7 +610,7 @@ router.post("/notifications/read-all", requireAuth, (_req, res) => {
   res.json({ ok: true });
 });
 
-router.get("/automations", requireAuth, (_req, res) => {
+router.get("/automations", requireAuth, (_req: Request, res: Response) => {
   res.json(
     readDb().automations.map((a) => ({
       id: a.id,
@@ -620,25 +622,22 @@ router.get("/automations", requireAuth, (_req, res) => {
   );
 });
 
-router.patch("/automations/:id/status", requireAuth, (req, res) => {
-  let updated = null;
-  updateDb((db) => {
-    const row = db.automations.find((a) => a.id === req.params.id);
-    if (!row) return;
-    row.status = row.status === "Active" ? "Paused" : "Active";
-    updated = row;
-  });
-  if (!updated) return res.status(404).json({ detail: "Not found" });
+router.patch("/automations/:id/status", requireAuth, (req: Request, res: Response) => {
+  const db = readDb();
+  const row = db.automations.find((a) => a.id === req.params.id);
+  if (!row) return res.status(404).json({ detail: "Not found" });
+  row.status = row.status === "Active" ? "Paused" : "Active";
+  writeDb(db);
   res.json({
-    id: updated.id,
-    name: updated.name,
-    trigger: updated.trigger,
-    status: updated.status,
-    runsToday: updated.runsToday,
+    id: row.id,
+    name: row.name,
+    trigger: row.trigger,
+    status: row.status,
+    runsToday: row.runsToday,
   });
 });
 
-router.delete("/automations/:id", requireAuth, (req, res) => {
+router.delete("/automations/:id", requireAuth, (req: Request, res: Response) => {
   updateDb((db) => {
     db.automations = db.automations.filter((a) => a.id !== req.params.id);
   });
@@ -646,11 +645,11 @@ router.delete("/automations/:id", requireAuth, (req, res) => {
 });
 
 // ── Pipeline / Settings ───────────────────────────────────────────
-router.get("/pipeline/stages", requireAuth, (_req, res) => {
+router.get("/pipeline/stages", requireAuth, (_req: Request, res: Response) => {
   res.json([...readDb().pipelineStages].sort((a, b) => a.order - b.order));
 });
 
-router.put("/pipeline/stages", requireAuth, (req, res) => {
+router.put("/pipeline/stages", requireAuth, (req: Request, res: Response) => {
   const stages = req.body || [];
   updateDb((db) => {
     for (const item of stages) {
@@ -661,18 +660,18 @@ router.put("/pipeline/stages", requireAuth, (req, res) => {
   res.json([...readDb().pipelineStages].sort((a, b) => a.order - b.order));
 });
 
-router.get("/pipeline/preferences", requireAuth, (_req, res) => {
+router.get("/pipeline/preferences", requireAuth, (_req: Request, res: Response) => {
   res.json(readDb().pipelinePreferences);
 });
 
-router.put("/pipeline/preferences", requireAuth, (req, res) => {
+router.put("/pipeline/preferences", requireAuth, (req: Request, res: Response) => {
   updateDb((db) => {
     db.pipelinePreferences = { ...db.pipelinePreferences, ...req.body };
   });
   res.json(readDb().pipelinePreferences);
 });
 
-router.get("/settings/workspace", requireAuth, (_req, res) => {
+router.get("/settings/workspace", requireAuth, (_req: Request, res: Response) => {
   const org = readDb().organizations[0];
   res.json({
     organizationName: org?.name || "Nexus CRM",
@@ -681,7 +680,7 @@ router.get("/settings/workspace", requireAuth, (_req, res) => {
   });
 });
 
-router.put("/settings/workspace", requireAuth, (req, res) => {
+router.put("/settings/workspace", requireAuth, (req: Request, res: Response) => {
   updateDb((db) => {
     const org = db.organizations[0];
     if (org) {
@@ -694,7 +693,7 @@ router.put("/settings/workspace", requireAuth, (req, res) => {
 });
 
 // ── Modules / Features catalog ────────────────────────────────────
-router.get("/modules/features", requireAuth, (_req, res) => {
+router.get("/modules/features", requireAuth, (_req: Request, res: Response) => {
   const grouped = featuresByStatus();
   res.json({
     total: FEATURES.length,
@@ -704,7 +703,7 @@ router.get("/modules/features", requireAuth, (_req, res) => {
   });
 });
 
-router.get("/modules/features/summary", requireAuth, (_req, res) => {
+router.get("/modules/features/summary", requireAuth, (_req: Request, res: Response) => {
   const grouped = featuresByStatus();
   res.json({
     live: grouped.live.map((f) => f.name),
@@ -718,15 +717,15 @@ router.get("/modules/features/summary", requireAuth, (_req, res) => {
   });
 });
 
-router.get("/modules/features/:featureId", requireAuth, (req, res) => {
+router.get("/modules/features/:featureId", requireAuth, (req: Request, res: Response) => {
   const feature = FEATURES.find((f) => f.id === req.params.featureId);
   if (!feature) return res.status(404).json({ detail: "Feature not found" });
   res.json(feature);
 });
 
-router.get("/modules/:moduleName", requireAuth, (req, res) => {
-  const moduleName = req.params.moduleName;
-  const hints = {
+router.get("/modules/:moduleName", requireAuth, (req: Request, res: Response) => {
+  const moduleName = String(req.params.moduleName);
+  const hints: Record<string, string[]> = {
     calendar: ["GOOGLE_CLIENT_ID", "MICROSOFT_CLIENT_ID"],
     email: ["SMTP_HOST", "GOOGLE_CLIENT_ID"],
     communication: ["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN"],

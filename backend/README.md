@@ -1,23 +1,22 @@
-# Nexus CRM — Backend
+# Nexus CRM — Backend (TypeScript)
 
-**Express / Node.js** API for Nexus CRM. Provides JWT auth, role-aware REST resources, seeded demo CRM data, and an enterprise feature registry consumed by the frontend `/features` page.
+**TypeScript + Express / Node.js** API for Nexus CRM. Provides JWT auth, role-aware REST resources, seeded demo CRM data, and an enterprise feature registry consumed by the frontend `/features` page.
 
 > Full-stack overview (frontend + architecture): see the [root README](../README.md).
 
 ---
 
-## Runtime note
+## Language & runtime
 
-This backend is **Node.js + Express only**. Python / FastAPI artifacts were removed from the package:
-
-| Removed | Why |
+| Item | Detail |
 |---|---|
-| `app-python-legacy/` | Old FastAPI app (superseded) |
-| `.venv/` | Python virtualenv |
-| `requirements.txt` | Python dependencies |
-| `nexus_crm.db` | Legacy SQLite from the Python stack |
+| Language | **TypeScript 5** (strict mode) |
+| Runtime | Node.js (ES modules) |
+| Framework | Express **5** |
+| Dev | `tsx watch` (`npm run dev`) |
+| Prod | `tsc` → `node dist/index.js` (`npm run build` / `npm run start`) |
 
-Use `npm install` + `npm run dev` — no Python, pip, or uvicorn required.
+Python / FastAPI and plain JavaScript sources were removed. All application code lives under `src/**/*.ts`.
 
 ---
 
@@ -25,15 +24,17 @@ Use `npm install` + `npm run dev` — no Python, pip, or uvicorn required.
 
 | Category | Technology |
 |---|---|
-| Runtime | Node.js (ES modules) |
+| Language | TypeScript (strict) |
+| Runtime | Node.js |
 | Framework | Express **5** |
 | Auth | JWT (`jsonwebtoken`), password hashing (`bcryptjs`) |
 | Config | `dotenv` |
 | Cross-origin | `cors` |
 | IDs | `uuid` |
 | Persistence | JSON file store (`src/data/db.json`) |
+| Tooling | `typescript`, `tsx`, `@types/*` |
 
-Designed for local demos and portfolio review. The store layer is isolated so it can be replaced with PostgreSQL / Prisma (or similar) without rewriting route contracts.
+Domain models are shared in `src/types.ts` (User, Deal, Lead, Contact, Database, Feature, …).
 
 ---
 
@@ -52,6 +53,8 @@ npm run dev
 | Health | http://127.0.0.1:8001/health |
 | Features | http://127.0.0.1:8001/api/v1/modules/features |
 
+Health response includes `"language": "TypeScript"`.
+
 ### Seed accounts
 
 | Email | Password | Role |
@@ -63,9 +66,11 @@ npm run dev
 
 | Command | Description |
 |---|---|
-| `npm run dev` | Watch mode (`node --watch`) |
-| `npm run start` | Start server |
+| `npm run dev` | TypeScript watch via `tsx` |
+| `npm run build` | Compile to `dist/` |
+| `npm run start` | Run compiled `dist/index.js` |
 | `npm run seed` | Re-seed demo database |
+| `npm run typecheck` | `tsc --noEmit` |
 
 ---
 
@@ -73,15 +78,16 @@ npm run dev
 
 ```text
 src/
-├── index.js              # Bootstrap, CORS, /health, mount /api/v1
-├── config.js             # Env-driven config
-├── seed.js               # Demo users + CRM records
-├── middleware/auth.js    # JWT + role guards
-├── routes/api.js         # REST surface
-├── store/db.js           # Read/write JSON persistence
+├── index.ts              # Bootstrap, CORS, /health, mount /api/v1
+├── config.ts             # Env-driven config
+├── types.ts              # Shared domain TypeScript types
+├── seed.ts               # Demo users + CRM records
+├── middleware/auth.ts    # JWT + role guards
+├── routes/api.ts         # REST surface
+├── store/db.ts           # Read/write JSON persistence
 └── data/
     ├── db.json           # Runtime data file
-    └── features.js       # Feature registry
+    └── features.ts       # Feature registry
 ```
 
 ---
@@ -153,6 +159,7 @@ Summary endpoint: `GET /api/v1/modules/features/summary` (auth required).
 
 ## Engineering highlights
 
+- Strict TypeScript across routes, middleware, store, and seed
 - Versioned REST API with consistent JSON responses
 - JWT middleware + role checks on sensitive user routes
 - Auto-seed on empty store for one-command demos

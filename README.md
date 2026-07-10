@@ -5,9 +5,9 @@
 | Layer | Stack | Default URL |
 |---|---|---|
 | Frontend | Next.js 16 · React 19 · TypeScript · Tailwind CSS 4 · GSAP | http://localhost:3000 |
-| Backend | Node.js · Express 5 · JWT · JSON file store | http://127.0.0.1:8001 |
+| Backend | **TypeScript** · Node.js · Express 5 · JWT · JSON file store | http://127.0.0.1:8001 |
 
-**Backend runtime is Node.js only.** An earlier FastAPI / Python prototype (`app-python-legacy`, `.venv`, `requirements.txt`, SQLite `nexus_crm.db`) was removed so the repo stays a clean Express + Next.js stack for demos and interviews.
+**Backend language is TypeScript** (strict `tsc`, Express routes typed end-to-end). An earlier FastAPI / Python prototype was removed. Plain JavaScript sources were migrated to `.ts` — run with `tsx` in development and `tsc` → `dist/` for production.
 
 ---
 
@@ -17,7 +17,7 @@ Hiring managers and recruiters can evaluate:
 
 - **Product surface area** — dashboard, leads, deals (kanban + list), contacts, analytics, automations, notifications, settings, feature catalog, login
 - **Frontend craft** — App Router, design tokens, reusable primitives, GSAP motion, readable premium UI
-- **Backend craft** — Express REST API, JWT + role guards, seeded demo data, feature registry
+- **Backend craft** — TypeScript Express REST API, JWT + role guards, seeded demo data, feature registry
 - **System thinking** — API contract documented in the frontend, honest status labels for incomplete / third-party modules
 
 ---
@@ -28,7 +28,7 @@ Hiring managers and recruiters can evaluate:
 
 - Node.js 20+ (recommended)
 - npm 10+
-- No Python / pip — backend is Express only
+- No Python / pip — backend is **TypeScript + Express** only
 
 ### 1) Backend
 
@@ -77,14 +77,15 @@ CRM/
 │       ├── hooks/            # Shared CRM state provider
 │       ├── lib/api/          # Endpoint contract + client adapters
 │       └── types/            # Domain TypeScript models
-└── backend/                  # Express API
+└── backend/                  # TypeScript Express API
     └── src/
-        ├── index.js          # Server bootstrap, CORS, health
-        ├── routes/api.js     # /api/v1 REST surface
-        ├── middleware/auth.js
-        ├── store/db.js       # JSON persistence
-        ├── seed.js           # Demo users + CRM records
-        └── data/features.js  # Enterprise feature registry
+        ├── index.ts          # Server bootstrap, CORS, health
+        ├── routes/api.ts     # /api/v1 REST surface
+        ├── middleware/auth.ts
+        ├── store/db.ts       # JSON persistence
+        ├── seed.ts           # Demo users + CRM records
+        ├── types.ts          # Shared domain types
+        └── data/features.ts  # Enterprise feature registry
 ```
 
 **Data flow (target):** UI → typed API contract (`endpoints.ts`) → Express `/api/v1/*` → JSON store.  
@@ -148,8 +149,10 @@ npm run lint     # ESLint
 
 | Area | Choice | Notes |
 |---|---|---|
-| Runtime | **Node.js** (ES modules) | `"type": "module"` |
+| Language | **TypeScript 5** (strict) | Shared domain types in `src/types.ts` |
+| Runtime | **Node.js** (ES modules) | Compiled with `tsc` to `dist/` |
 | Framework | **Express 5** | REST under `/api/v1` |
+| Dev runner | **tsx** | `npm run dev` / `npm run seed` |
 | Auth | **JWT** (`jsonwebtoken`) + **bcryptjs** | Login / register / `me`; role middleware |
 | Config | **dotenv** | Port, CORS, optional third-party keys |
 | CORS | **cors** | Allows local Next.js origins |
@@ -180,9 +183,11 @@ OAuth, SSO, LDAP, OTP, Stripe, AI, and similar providers are **stubbed** and ret
 
 ```bash
 cd backend
-npm run dev      # node --watch
-npm run start    # production-style start
-npm run seed     # re-seed demo data
+npm run dev         # tsx watch (TypeScript)
+npm run build       # tsc → dist/
+npm run start       # node dist/index.js
+npm run seed        # re-seed demo data
+npm run typecheck   # tsc --noEmit
 ```
 
 ---
@@ -227,9 +232,10 @@ NEXT_PUBLIC_USE_DEMO_API=false
 
 | Signal | Evidence in this repo |
 |---|---|
-| Full-stack ownership | Next.js UI + Express API in one monorepo |
+| Full-stack ownership | Next.js UI + TypeScript Express API in one monorepo |
 | Modern frontend | Next 16, React 19, Tailwind 4, TypeScript |
-| API design | Versioned `/api/v1`, JWT, role-aware routes |
+| Typed backend | Strict TypeScript Express, domain models, JWT auth |
+| API design | Versioned `/api/v1`, role-aware routes |
 | Product UX | Multi-module CRM with premium motion and typography |
 | Engineering honesty | Feature matrix with live vs stub vs external |
 | Runnability | Seed users, health check, documented local setup |

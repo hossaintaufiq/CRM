@@ -1,6 +1,6 @@
-# Nexus CRM — Feature Matrix (Express backend)
+# Nexus CRM — Feature Matrix (TypeScript Express backend)
 
-Backend runtime: **Node.js + Express** (`backend/src`).
+Backend runtime: **TypeScript + Node.js + Express** (`backend/src/**/*.ts`).
 
 Status legend:
 - **live** — implemented and runnable

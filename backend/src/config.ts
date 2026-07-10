@@ -20,4 +20,4 @@ export const config = {
   ssoMetadataUrl: process.env.SSO_METADATA_URL || "",
   stripeSecret: process.env.STRIPE_SECRET_KEY || "",
   openaiKey: process.env.OPENAI_API_KEY || "",
-};
+} as const;
