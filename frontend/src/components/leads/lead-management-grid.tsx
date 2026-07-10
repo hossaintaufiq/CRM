@@ -5,7 +5,9 @@ import gsap from "gsap";
 import { Mail, NotebookPen, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import type { Lead, LeadStatus } from "@/types/crm";
+import { cn } from "@/lib/utils";
 
 interface LeadManagementGridProps {
   leads: Lead[];
@@ -13,6 +15,12 @@ interface LeadManagementGridProps {
   onSelectLead: (leadId: string) => void;
   onCloseDetail: () => void;
   onUpdateLeadStatus: (leadId: string, status: LeadStatus) => void;
+}
+
+function scoreTone(score: number): "success" | "warning" | "destructive" {
+  if (score >= 80) return "success";
+  if (score >= 60) return "warning";
+  return "destructive";
 }
 
 export function LeadManagementGrid({
@@ -39,6 +47,11 @@ export function LeadManagementGrid({
       return b.score - a.score;
     });
   }, [leads, query, sortBy]);
+
+  const avgScore =
+    leads.length > 0
+      ? Math.round(leads.reduce((sum, lead) => sum + lead.score, 0) / leads.length)
+      : 0;
 
   function toggleRow(id: string): void {
     setSelectedRows((current) =>
@@ -80,16 +93,33 @@ export function LeadManagementGrid({
   }, [selectedLead]);
 
   return (
-    <section className="relative space-y-4">
-      <header className="space-y-2">
-        <p className="page-eyebrow">Inbound engine</p>
-        <h1 className="text-3xl font-semibold tracking-tight">Lead management</h1>
-        <p className="text-sm text-muted-foreground">
-          Score, qualify, and action high-intent accounts from one grid.
-        </p>
+    <section className="relative space-y-5">
+      <header className="flex flex-wrap items-end justify-between gap-4">
+        <div className="space-y-2">
+          <p className="page-eyebrow">Inbound engine</p>
+          <h1 className="text-3xl font-semibold tracking-tight">Lead management</h1>
+          <p className="text-sm text-muted-foreground">
+            Score, qualify, and action high-intent accounts from one grid.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <div className="rounded-md border border-border/80 bg-card/80 px-3 py-2">
+            <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
+              Leads
+            </p>
+            <p className="font-mono text-sm font-semibold tabular-nums">{leads.length}</p>
+          </div>
+          <div className="rounded-md border border-border/80 bg-card/80 px-3 py-2">
+            <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
+              Avg score
+            </p>
+            <p className="font-mono text-sm font-semibold tabular-nums">{avgScore}</p>
+          </div>
+        </div>
       </header>
+
       <div className="surface relative rounded-lg p-5">
-        <div className="mb-3 flex flex-wrap items-center gap-2">
+        <div className="mb-4 flex flex-wrap items-center gap-2">
           <Input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
@@ -97,7 +127,7 @@ export function LeadManagementGrid({
             className="max-w-xs"
           />
           <select
-            className="focus-ring h-9 rounded-md border border-border bg-background px-3 text-sm"
+            className="focus-ring h-9 rounded-md border border-border/80 bg-card/60 px-3 text-sm"
             value={sortBy}
             onChange={(event) =>
               setSortBy(event.target.value as "score" | "name" | "lastTouch")
@@ -107,113 +137,166 @@ export function LeadManagementGrid({
             <option value="name">Sort by name</option>
             <option value="lastTouch">Sort by last touch</option>
           </select>
-          <p className="font-mono text-[11px] text-muted-foreground">
-            {selectedRows.length} selected
+          <p className="ml-auto font-mono text-[11px] text-muted-foreground">
+            {selectedRows.length} selected · {sortedLeads.length} shown
           </p>
         </div>
-      <div className="overflow-hidden rounded-md border border-border/80">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-muted/50 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
-            <tr>
-              <th className="px-4 py-3">Select</th>
-              <th className="px-4 py-3">Lead</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Score</th>
-              <th className="px-4 py-3">Last Touch</th>
-              <th className="px-4 py-3">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sortedLeads.map((lead) => (
-              <tr
-                key={lead.id}
-                className="cursor-pointer border-t border-border hover:bg-muted/40"
-              >
-                <td className="px-4 py-3">
-                  <input
-                    type="checkbox"
-                    checked={selectedRows.includes(lead.id)}
-                    onChange={() => toggleRow(lead.id)}
-                    aria-label={`Select ${lead.name}`}
-                  />
-                </td>
-                <td className="px-4 py-3">
-                  <button
-                    type="button"
-                    onClick={() => onSelectLead(lead.id)}
-                    className="text-left"
-                  >
-                    <p className="font-medium">{lead.name}</p>
-                  </button>
-                  <p className="text-xs text-muted-foreground">{lead.company}</p>
-                </td>
-                <td className="px-4 py-3">
-                  <select
-                    value={lead.status}
-                    className="focus-ring h-8 rounded-md border border-border bg-background px-2 text-xs"
-                    onChange={(event) =>
-                      onUpdateLeadStatus(lead.id, event.target.value as LeadStatus)
-                    }
-                  >
-                    <option value="New">New</option>
-                    <option value="Working">Working</option>
-                    <option value="Qualified">Qualified</option>
-                    <option value="Disqualified">Disqualified</option>
-                  </select>
-                </td>
-                <td className="px-4 py-3 font-mono tabular-nums">{lead.score}</td>
-                <td className="px-4 py-3 font-mono text-[11px] text-muted-foreground">
-                  {lead.lastTouch}
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex gap-1">
-                    <Button size="icon" variant="ghost" aria-label="Email lead">
-                      <Mail className="h-4 w-4" />
-                    </Button>
-                    <Button size="icon" variant="ghost" aria-label="Call lead">
-                      <Phone className="h-4 w-4" />
-                    </Button>
-                    <Button size="icon" variant="ghost" aria-label="Log note">
-                      <NotebookPen className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
 
-      {selectedLead ? (
-        <>
-          <button
-            type="button"
-            data-lead-overlay
-            className="absolute inset-0 z-10 bg-black/30"
-            aria-label="Close lead detail"
-            onClick={onCloseDetail}
-          />
-          <aside
-            ref={drawerRef}
-            className="absolute right-0 top-0 z-20 h-full w-[380px] border-l border-border bg-card/95 p-5 shadow-2xl backdrop-blur-xl"
-          >
-            <p className="page-eyebrow">Lead dossier</p>
-            <h3 className="mt-2 text-lg font-semibold tracking-tight">{selectedLead.name}</h3>
-            <p className="text-sm text-muted-foreground">{selectedLead.company}</p>
-            <div className="mt-4 space-y-2">
-              {selectedLead.timeline.map((item) => (
-                <div
-                  key={item}
-                  data-lead-item
-                  className="rounded-md border border-border/70 bg-muted/40 p-3 text-sm"
+        <div className="overflow-hidden rounded-md border border-border/80">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-muted/50 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+              <tr>
+                <th className="px-4 py-3">Select</th>
+                <th className="px-4 py-3">Lead</th>
+                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">Score</th>
+                <th className="px-4 py-3">Last Touch</th>
+                <th className="px-4 py-3">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sortedLeads.map((lead) => (
+                <tr
+                  key={lead.id}
+                  className={cn(
+                    "border-t border-border/70 transition-colors hover:bg-muted/35",
+                    selectedLead?.id === lead.id && "bg-primary/5",
+                  )}
                 >
-                  {item}
-                </div>
+                  <td className="px-4 py-3.5">
+                    <input
+                      type="checkbox"
+                      checked={selectedRows.includes(lead.id)}
+                      onChange={() => toggleRow(lead.id)}
+                      aria-label={`Select ${lead.name}`}
+                      className="accent-[rgb(8_145_178)]"
+                    />
+                  </td>
+                  <td className="px-4 py-3.5">
+                    <button
+                      type="button"
+                      onClick={() => onSelectLead(lead.id)}
+                      className="text-left"
+                    >
+                      <p className="font-medium tracking-tight hover:text-primary">
+                        {lead.name}
+                      </p>
+                    </button>
+                    <p className="text-xs text-muted-foreground">{lead.company}</p>
+                    <p className="mt-0.5 font-mono text-[10px] text-muted-foreground">
+                      {lead.source}
+                    </p>
+                  </td>
+                  <td className="px-4 py-3.5">
+                    <select
+                      value={lead.status}
+                      className="focus-ring h-8 rounded-md border border-border/80 bg-card/60 px-2 text-xs"
+                      onChange={(event) =>
+                        onUpdateLeadStatus(lead.id, event.target.value as LeadStatus)
+                      }
+                    >
+                      <option value="New">New</option>
+                      <option value="Working">Working</option>
+                      <option value="Qualified">Qualified</option>
+                      <option value="Disqualified">Disqualified</option>
+                    </select>
+                  </td>
+                  <td className="px-4 py-3.5">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-sm font-semibold tabular-nums">
+                        {lead.score}
+                      </span>
+                      <div className="h-1.5 w-16 overflow-hidden rounded-full bg-muted">
+                        <div
+                          className={cn(
+                            "h-full rounded-full",
+                            scoreTone(lead.score) === "success" && "bg-success",
+                            scoreTone(lead.score) === "warning" && "bg-warning",
+                            scoreTone(lead.score) === "destructive" && "bg-destructive",
+                          )}
+                          style={{ width: `${lead.score}%` }}
+                        />
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3.5 font-mono text-[11px] text-muted-foreground">
+                    {lead.lastTouch}
+                  </td>
+                  <td className="px-4 py-3.5">
+                    <div className="flex gap-1">
+                      <Button size="icon" variant="ghost" aria-label="Email lead">
+                        <Mail className="h-4 w-4" />
+                      </Button>
+                      <Button size="icon" variant="ghost" aria-label="Call lead">
+                        <Phone className="h-4 w-4" />
+                      </Button>
+                      <Button size="icon" variant="ghost" aria-label="Log note">
+                        <NotebookPen className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
               ))}
-            </div>
-          </aside>
-        </>
-      ) : null}
+            </tbody>
+          </table>
+        </div>
+
+        {selectedLead ? (
+          <>
+            <button
+              type="button"
+              data-lead-overlay
+              className="absolute inset-0 z-10 bg-foreground/25 backdrop-blur-[2px]"
+              aria-label="Close lead detail"
+              onClick={onCloseDetail}
+            />
+            <aside
+              ref={drawerRef}
+              className="absolute right-0 top-0 z-20 h-full w-[400px] border-l border-border bg-card/98 p-5 shadow-2xl backdrop-blur-xl"
+            >
+              <p className="page-eyebrow">Lead dossier</p>
+              <div className="mt-2 flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="text-lg font-semibold tracking-tight">{selectedLead.name}</h3>
+                  <p className="text-sm text-muted-foreground">{selectedLead.company}</p>
+                </div>
+                <Badge variant={scoreTone(selectedLead.score)}>{selectedLead.score}</Badge>
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <div className="rounded-md border border-border/70 bg-muted/25 p-3">
+                  <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
+                    Status
+                  </p>
+                  <p className="mt-1 text-sm font-medium">{selectedLead.status}</p>
+                </div>
+                <div className="rounded-md border border-border/70 bg-muted/25 p-3">
+                  <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
+                    Source
+                  </p>
+                  <p className="mt-1 text-sm font-medium">{selectedLead.source}</p>
+                </div>
+              </div>
+              <p className="mt-5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                Timeline
+              </p>
+              <div className="mt-2 space-y-2">
+                {selectedLead.timeline.map((item, index) => (
+                  <div
+                    key={item}
+                    data-lead-item
+                    className="relative rounded-md border border-border/70 bg-muted/30 p-3 pl-4 text-sm"
+                  >
+                    <span className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full bg-primary" />
+                    <p className="font-mono text-[10px] text-muted-foreground">
+                      Event {index + 1}
+                    </p>
+                    <p className="mt-1">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </aside>
+          </>
+        ) : null}
       </div>
     </section>
   );

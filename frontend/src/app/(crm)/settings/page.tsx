@@ -1,7 +1,7 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardMeta, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export default function SettingsPage(): React.JSX.Element {
@@ -14,7 +14,7 @@ export default function SettingsPage(): React.JSX.Element {
           Workspace defaults and organization preferences.
         </p>
       </header>
-      <Card>
+      <Card className="overflow-hidden">
         <CardHeader>
           <p className="page-eyebrow mb-2">Workspace</p>
           <CardTitle>Organization preferences</CardTitle>
@@ -32,10 +32,14 @@ export default function SettingsPage(): React.JSX.Element {
             </span>
             <Input defaultValue="USD" />
           </label>
-          <div className="flex justify-end">
+          <div className="flex justify-end pt-1">
             <Button>Save changes</Button>
           </div>
         </CardContent>
+        <CardMeta>
+          <span>Org scope</span>
+          <span>Northstar Ventures</span>
+        </CardMeta>
       </Card>
     </section>
   );
